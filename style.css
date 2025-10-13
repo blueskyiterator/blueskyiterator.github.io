@@ -16,8 +16,8 @@ html, body {background: #BEC5AA; line-height: 1.7em;font-family: sans-serif, hel
 .clear {clear: both;}
 
 @font-face {
-  font-family: "Rokkitt";
-  src: url("/Rokkitt-Regular.woff2");
+  font-family: 'Rokkitt';
+  src: url('/Rokkitt-Regular.woff2');
 }
 
 p {
@@ -44,14 +44,14 @@ p {
 	font-size: 2.0em;
 	line-height: 1.1em;
 	font-weight: 600;
-	font-family: "Rokkitt", Helvetica, Arial;
+	font-family: 'Rokkitt', Helvetica, Arial;
 	margin-bottom: 2px;
 }
 
 #name h2 {
 	font-size: 1.6em;
 	margin-left: 2px;
-	font-family: "Rokkitt", Helvetica, Arial;
+	font-family: 'Rokkitt', Helvetica, Arial;
 }
 
 #mainArea {
