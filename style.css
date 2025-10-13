@@ -15,6 +15,11 @@ html, body {background: #BEC5AA; line-height: 1.7em;font-family: sans-serif, hel
 
 .clear {clear: both;}
 
+@font-face {
+  font-family: "Rokkitt";
+  src: url("Rokkitt-Regular.woff2");
+}
+
 p {
 	font-size: 1em;
 	line-height: 1.4em;
