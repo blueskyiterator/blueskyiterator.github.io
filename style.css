@@ -17,7 +17,7 @@ html, body {background: #BEC5AA; line-height: 1.7em;font-family: sans-serif, hel
 
 @font-face {
   font-family: "Rokkitt";
-  src: url("https://blueskyiterator.github.io/Rokkitt-Regular.woff2");
+  src: url("/Rokkitt-Regular.woff2");
 }
 
 p {
