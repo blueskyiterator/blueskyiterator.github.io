@@ -1,0 +1,260 @@
+<!--------------------------------------------------------------------------->  
+<!--                           INTRODUCTION                                
+
+ The Code Project article submission template (HTML version)
+
+Using this template will help us post your article sooner. To use, just 
+follow the 3 easy steps below:
+ 
+     1. Fill in the article description details
+     2. Add links to your images and downloads
+     3. Include the main article text
+
+That's all there is to it! All formatting will be done by our submission
+scripts and style sheets. 
+
+-->  
+<!--------------------------------------------------------------------------->  
+<!--                        IGNORE THIS SECTION                            -->
+<html>
+<head>
+<title>The Code Project</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<Style>
+BODY, P, TD { font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 10pt }
+H2,H3,H4,H5 { color: #ff9900; font-weight: bold; }
+H2 { font-size: 13pt; }
+H3 { font-size: 12pt; }
+H4 { font-size: 10pt; color: black; }
+PRE { BACKGROUND-COLOR: #FBEDBB; FONT-FAMILY: "Courier New", Courier, mono; 
+      WHITE-SPACE: pre; }
+CODE { COLOR: #990000; FONT-FAMILY: "Courier New", Courier, mono; }
+</style>
+</head>
+<body bgcolor="#FFFFFF" color=#000000>
+<!--------------------------------------------------------------------------->  
+
+
+<!-------------------------------     STEP 1      --------------------------->
+<!--  Fill in the details (CodeProject will reformat this section for you) -->
+
+<pre>
+Title:       Playing Midi files with DirectMusic  	
+Author:      Carlos Jiménez de Parga 
+Email:       cjimenez@servitel.es
+Environment: VC++ 6.0, NT 4.0,2000 Server, Win95/98
+Keywords:    DirectX Audio Class
+Level:       
+Description: A DirectX 8 class to perform Midi music playback.
+Section      Audio &amp; Video
+SubSection   DirectMusic 
+</pre>
+
+<hr width=100% noshade>
+
+<!-------------------------------     STEP 2      --------------------------->
+<!--  Include download and sample image information.                       --> 
+
+<ul class=download>
+<li><a href="MIDIPlayer_demo.zip">Download executable demo project (DirectX 8 required) - 151Kb</a></li>
+</ul>
+<img src="CMidiMusic_mod.jpg" width="500" height="192"></span>
+<H1>Playing MIDI files with DirectMusic</H1>
+<H2>Introduction</H2>
+<p>This article focuses on the use of <code><font size="2">CMidiMusic </font> </code>which
+allows an easy access to DirectX DirectMusic API.<br>
+This class allows loading and playing general midi sequence files(.mid),
+segment files (.sgt) and PCM waveform files<br>
+(.wav). The class is designed to perform midi playback in one segment and
+offers additional features like using any midi port installed in your
+system, 3D sound environment, sound effects, etc...</p>
+<H2>Direct Audio specifications</H2>
+<p>The DirectX 8.0 Audio part offers improved integration between
+DirectSound and DirectMusic,<br>
+including a great set of new features. Some of these are listed hereafter:</p>
+<ul>
+  <li>The last version of Direct Audio allows using hardware acceleration for
+    sound synthesis.</li>
+  <li>With the new AudioPath model the sound of a port does not go directly to a
+    directosund buffer, instead, it goes to an audiopath which controls data
+    flow from a performance to the final output. The adudiopath<br>
+    allows controlling the 3D position of each sound and adding other effects&nbsp;</li>
+  <li>The segments are modified independently and you can apply effects like
+    pan, volume, individually.</li>
+  <li>It allows using DLS2 (Downloadable sound level 2 standard) which provides a
+    great sound quality<br>
+    and unlimited use of instruments with the software synthetizer.</li>
+  <li>FX (Reverb, Chorus...) if it is available in the software synthetizer.</li>
+  <li>It overcomes the 16 midi channels limit, allowing the use of as many midi
+	channels as the software is able to handle.</li>
+  <li>The playback can be controlled accurately in run time by selecting
+    diferents sets of musical variations<br>
+    and changes in the chords progress.&nbsp;</li>
+  <li>3D Positioning.</li>
+</ul>
+<H2>Main Intefaces of DirectMusic</H2>
+<p><b>IDirectMusic8: </b> This interface allows managing buffers and ports. There should only
+exist one instance of this<br>
+interface per aplication.</p>
+<p><b>IDirectMusicPerformance8: </b>This is the most important interface in
+playback management. It is used to add<br>
+and remove ports, play segments, notify event reception, control music
+parameters and obtain timing<br>
+information.</p>
+<p><b>IDirectMusicPort8: </b>This interface provides access to DirectMusicPorts
+objects like MPU-401 or the software<br>
+sinthesizer.</p>
+<p><b>IDirectMusicSegment8: </b>This interface represents a segment, musical
+piece made up of multiple tracks.<br>
+It can contain a midi file,a wave,a segment.</p>
+<p><b>IDirectMusicLoader8: </b>Its main function is to find and load the
+diferent objects.<br>
+These objects are to be stored in a segment.</p>
+<p><b>IDirectMusicSegmentState8:</b>  The (playback) engine creates a
+SegmentState object which allows<br>
+analyzing the state of the segment currently playing.</p>
+<p><b>IDirectMusicAudioPath8: </b>The IDirectMusicAudioPath8 interface
+represents the stages of data flow from the data file to the primary buffer.</p>
+<h2>DirectMusic Architecture</h2>
+<p>Once a resource has been loaded in a segment, the performance dispatches the
+messages defined&nbsp;<br>
+by a tool of an aplication, such tools are grouped in toolgraphs which process
+specific segment&nbsp;<br>
+messages. A tool can modify a message and pass it on, delete
+it, or send a new message.</p>
+<p>
+Finally, the messages are delivered to the output tool, which converts the data
+to MIDI format before passing it to the synthesizer. Channel-specific MIDI
+messages are directed to the appropriate channel group on the synthesizer. The
+synthesizer creates sound waves and streams them to a device called a sink,
+which manages the distribution of data through buses to DirectSound buffers.</p>
+<p>There are three kinds of buffers:</p>
+<ul>
+  <li><i>Sink-in buffers</i> are DirectSound secondary buffers into which the
+    sink streams data. Here are applied<br>
+    many effects like 3D, pan, volume, etc...The resulting
+    waveform is passed either directly to the primary buffer or to one or more
+    mix-in buffers.</li>
+  <li><i>Mix-in buffers</i> receive data from other buffers, apply effects, and
+    mix the resulting wave forms. These buffers can be used to apply global
+    effects.</li>
+  <li>The <i>primary buffer</i> performs the final mixing on all data and passes
+    it to the rendering device.<br>
+  </li>
+</ul>
+<p>The following diagram shows the flow of data from files to the speakers:</p>
+<p align="center">
+<img src="CMidiMusic1.gif" width="464" height="704"></span>
+<H2>Using CMidiMusic</H2>
+
+<p>In first sight is necesary to add in Visual C++ IDE this library:Go to<b> Project -&gt; Settings
+-&gt; Object Library Modules</b>  and add <b>dxguid.lib of DirectX8 SDK.<br>
+<br>
+</b>After this it will be necesary to include in the project the header <code><font size="2">"dmusic.h"
+</font></code>and<code><font size="2"> &quot;dmusic.cpp&quot; </font></code>file
+and finally declare a dinamic&nbsp;variable of CMidiMusic class as shown below:</p>
+
+<pre><font size="2">void CPlayerDlg::OnButton_Start() 	
+{
+	DWORD dwcount; </font><code><font size="2">// Counter variable to enumerate the midi ports </font></code><font size="2">
+	INFOPORT Info; </font><code><font size="2">// INFOPORT structure to store port information </font></code><font size="2">
+	BOOL bSelected;
+
+	CMidiMusic *pMidi; 	</font><code><font size="2">// Pointer to CMidiMusic class </font></code>
+	<font size="2">pMidi=new CMidiMusic; </font>	<code><font size="2">// Allocate it </font> </code>	
+	<font size="2">pMidi-&gt;Initialize(FALSE);</font><code><font size="2">// Initialize without 3D positioning</font></code><font size="2">
+	
+	dwcount=0;
+	bSelected=FALSE;
+	</font>
+	 <code><font size="2">// Port enumeration  phase </font></code>
+	<code><font size="2"> // It is necessary to supply a port counter </font></code><font size="2">
+	while (pMidi-&gt;PortEnumeration(dwcount,&amp;Info)==S_OK)
+	{
+		</font><code><font size="2">// Ensure it is an output hardware device</font></code><font size="2">
+		if (Info.dwClass==DMUS_PC_OUTPUTCLASS) 
+		{
+			if (!((Info.dwFlags &amp; DMUS_PC_SOFTWARESYNTH) || bSelected))
+			{
+				</font><code><font size="2">// Select the enumerated port </font></code><font size="2">
+				pMidi-&gt;SelectPort(&amp;Info);
+				bSelected=TRUE;
+			}
+		}
+	
+	dwcount++; </font><code><font size="2"> // It is necessary</font></code><font size="2">
+	}
+
+	<code> </code></font><code><font size="2">// Read the file and specify if it is a mid file or not </font></code><font size="2">
+	pMidi-&gt;LoadMidiFromFile(&quot;c:/music/song_004.mid&quot;,TRUE);
+	<code> </code></font><code><font size="2">// Play the file</font></code><font size="2">
+	pMidi-&gt;Play();
+	AfxMessageBox(&quot;Playing...&quot;);
+	</font><code><font size="2"> // Stop it</font></code><font size="2">
+	pMidi-&gt;Stop();
+	<font color="#FF0000"><code> </code></font></font><code><font size="2"><font color="#FF0000">//Important!:</font> Delete the dinamic variable in order to call the destructor 
+	 //which call the DirectMusic releases interfaces
+	</font></code><font size="2">
+	delete pMidi;
+}
+</pre>
+
+
+
+<h2> CMidiMusic capabilities </h2>
+</font>
+<table border="1" width="100%" bgcolor="#336699" bordercolor="#6699FF">
+  <tr>
+    <td width="25%" bgcolor="#336699" bordercolor="#336699">
+      <p align="center"><font color="#FFFFFF"><span style="background-color: #336699"><b>Synthetizer</b></span></font></td>
+    <td width="25%" bgcolor="#336699" bordercolor="#336699">
+      <p align="center"><font color="#FFFFFF"><b>3D&nbsp;</b></font></td>
+    <td width="25%" bordercolor="#336699" bgcolor="#336699">
+      <p align="center"><font color="#FFFFFF"><b>Effects (Reverb,Chorus)</b></font></td>
+    <td width="25%" bordercolor="#336699" bgcolor="#336699">
+      <p align="center"><font color="#FFFFFF"><b>Segments(.sgt), Waves(.wav)</b></font></td>
+  </tr>
+  <tr>
+    <td width="25%" bgcolor="#6699FF">
+      <p align="center"><font color="#FFFFFF">MicroSoft Software</font></td>
+    <td width="25%" bgcolor="#6699FF">
+      <p align="center"><font color="#FFFFFF">Yes</font></td>
+    <td width="25%" bgcolor="#6699FF">
+      <p align="center"><font color="#FFFFFF">Only in not 3D mode</font></td>
+    <td width="25%" bgcolor="#6699FF">
+      <p align="center"><font color="#FFFFFF">Only in 3D mode</font></td>
+  </tr>
+  <tr>
+    <td width="25%" bgcolor="#6699FF">
+      <p align="center"><font color="#FFFFFF">Hardware</font></td>
+    <td width="25%" bgcolor="#6699FF">
+      <p align="center"><font color="#FFFFFF">No</font></td>
+    <td width="25%" bgcolor="#6699FF">
+      <p align="center"><font color="#FFFFFF">No</font></td>
+    <td width="25%" bgcolor="#6699FF">
+      <p align="center"><font color="#FFFFFF">No</font></td>
+  </tr>
+  <tr>
+    <td width="25%" bgcolor="#6699FF">
+      <p align="center"><font color="#FFFFFF">External</font></td>
+    <td width="25%" bgcolor="#6699FF">
+      <p align="center"><font color="#FFFFFF">No</font></td>
+    <td width="25%" bgcolor="#6699FF">
+      <p align="center"><font color="#FFFFFF">No</font></td>
+    <td width="25%" bgcolor="#6699FF">
+      <p align="center"><font color="#FFFFFF">No</font></td>
+  </tr>
+</table>
+<h2> More information </h2>
+<p>For more information about the CMidiMusic class read the attached file <b>readme.txt</b>
+included in the sources.<br>
+You will be able to find more information in the online help of <a href="http://www.microsoft.com/directx">http://www.microsoft.com/directx</a>
+ and DirectX 8<br>
+SDK technical documentation.</p>
+<h2> Overview of the demo project </h2>
+<p>As you can see, this is not WinAmp, wish it was ;) Nevertheless, 
+all of CMidiMusic class features are made available.</p>
+<p align="center"><img border="0" src="CMidiMusic2.jpg" align="left"></p>
+<p align="center">&nbsp;</p>
+</body>
+</html>

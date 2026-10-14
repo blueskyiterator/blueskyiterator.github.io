@@ -1,0 +1,967 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--------------------------------------------------------------------------->  
+<!--                           INTRODUCTION                                
+
+ The Code Project article submission template (HTML version)
+
+Using this template will help us post your article sooner. To use, just 
+follow the 3 easy steps below:
+ 
+     1. Fill in the article description details
+     2. Add links to your images and downloads
+     3. Include the main article text
+
+That's all there is to it! All formatting will be done by our submission
+scripts and style sheets. 
+
+-->  
+<!--------------------------------------------------------------------------->  
+<!--                        IGNORE THIS SECTION                            -->
+<html>
+<head>
+<title>The Code Project</title>
+<Style>
+BODY, P, TD { font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 10pt }
+H2,H3,H4,H5 { color: #ff9900; font-weight: bold; }
+H2 { font-size: 13pt; }
+H3 { font-size: 12pt; }
+H4 { font-size: 10pt; color: black; }
+PRE { BACKGROUND-COLOR: #FBEDBB; FONT-FAMILY: "Courier New", Courier, mono; WHITE-SPACE: pre; }
+CODE { COLOR: #990000; FONT-FAMILY: "Courier New", Courier, mono; }
+</style>
+<link rel="stylesheet" type="text/css" href="http://www.codeproject.com/App_Themes/NetCommunity/CodeProject.css">
+</head>
+<body bgcolor="#FFFFFF" color=#000000>
+<!--------------------------------------------------------------------------->  
+
+
+<!-------------------------------     STEP 1      --------------------------->
+<!--  Fill in the details (CodeProject will reformat this section for you) -->
+
+<!-------------------------------     STEP 2      --------------------------->
+<!--  Include download and sample image information.                       --> 
+
+<ul class=download>
+<li><a href="demo.zip">Download executable demo and project sources- 392 Kb</a></li>
+</ul>
+
+<H1> Knowledge-Based Systems with the CommonKADS Methodology </H1>
+
+<p><a href="#kbs1">1. Knowledge-Based Systems background<br>
+</a>&nbsp;&nbsp;&nbsp; <a href="#kbs1.1">1.1 What is a Knowledge-based system?</a><br>
+&nbsp;&nbsp;&nbsp; <a href="#kbs1.2">1.2 Programming languages</a><br>
+&nbsp;&nbsp;&nbsp; <a href="#kbs1.3">1.3 Where are they used?</a><br>
+&nbsp;&nbsp;&nbsp; <a href="#kbs1.4">1.4 Knowledge-based systems structure</a><br>
+&nbsp;&nbsp;&nbsp; <a href="#kbs1.5">1.5 Current trends</a><br>
+<a href="#kbs2">2. The CommonKADS methodology</a><br>
+&nbsp;&nbsp;&nbsp; <a href="#kbs2.1">2.1 A brief history</a><br>
+&nbsp;&nbsp;&nbsp; <a href="#kbs2.2">2.2 Models suite</a><br>
+&nbsp;&nbsp;&nbsp; <a href="#kbs2.3">2.3 Roles</a><br>
+<a href="#kbs3">3. Developing a KBS with CommonKADS</a><br>
+&nbsp;&nbsp;&nbsp; <a href="#kbs3.1">3.1 Domain Knowledge</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#kbs3.1.1">3.1.1 Class
+diagram</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#kbs3.1.2">3.1.2 Expressions
+relationship</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#kbs3.1.3">3.1.3
+Knowledge-base</a><br>
+&nbsp;&nbsp;&nbsp; <a href="#kbs3.2">3.2 Inference Knowledge</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#kbs3.2.1">3.2.1 Inference
+scheme</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#kbs3.2.2">3.2.2 Domain
+connection</a><br>
+&nbsp;&nbsp;&nbsp; <a href="#kbs3.3">3.3 Task Knowledge</a><br>
+<a href="#kbs4">4. Implementation (sample)</a><br>
+<a href="#kbs5">5. C++ embedding</a><br>
+<a href="#kbs6">6. Further reading and references</a></p>
+
+<h2><a name="kbs1"></a>1. Knowledge-Based Systems background</h2>
+
+<h3><a name="kbs1.1"></a>1.1 What is a Knowledge-Based System?</h3>
+<p>Knowledge-based systems are one branch of Artificial Intelligence, and we
+can say they are a reality in the systems development world nowadays. They are
+usually embedded in other applications, performing knowledge-specialized
+tasks.&nbsp;<p>Knowledge-Based Systems are the result of a long
+investigation process performed by Artificial Intelligence scientist. In the
+early 70's they started to understand that the capabilities of a computer
+program to solve problems are neither the formal expression nor the inference
+logic schemes but the knowledge it has. An expert is a person who owns a type of
+knowledge and experience in some human field activity, and he
+can apply it efficienctly in solving different tasks that he does not know
+specifically, but are in his knowledge domain. Therefore, a Knowledge-Based System is a group of computer programs that tries to
+emulate and even outdo in some situations a human expert in his field. The idea is not to
+replace human thinking by a machine, just the expertise of a competent
+professional. In order to build a KBS the Knowledge Engineers are usually
+advised by these experts. In some fields these experts work using rules, although
+they do not always realize it. <br>
+Knowledge-Based Systems are powerful when it is not necessary to use neither intuition nor common sense, getting successful results.<br>
+There have been two generations in Knowledge-Based Systems. In the first one,
+Knowledge Engineers were limited to code rules containing the
+knowledge of an expert. This formalism was not good enough because the projects were
+very difficult to maintain and expensive. Besides this, knowledge acquisition was
+heavily dependent on the expert. <br>
+In the second generation, <a href="http://en.wikipedia.org/wiki/Allen_Newell">Allen
+Newel </a>proposed the Knowledge Level where knowledge is independent of
+implementation and it is structured according to the different knowledge levels:<p>&nbsp;
+<center>
+<table border="0" width="100%" cellspacing="1" cellpadding="0" bgcolor="#C0C0C0">
+  <tr>
+    <td width="100%" bgcolor="#FFFFFF" align="left">
+      <ul>
+        <li><b>Knowledge level</b>: Agent, knowledge, goal, actions.</li>
+        <li><b>Symbolic level</b>: Computer, symbols, instructions.</li>
+        <li><b>Logic level</b>: Digital system, bits, logic and arithmetic operations.</li>
+        <li><b>Circuit level</b>: Electronic system, current.</li>
+      </ul>
+    </td>
+  </tr>
+</table>
+</center>
+<p>Newell points out the need to use models. In this way, we define
+&quot;knowledge acquisition&quot; as a process where the Knowledge Engineer
+creates a knowledge model that he will later make computational.&nbsp;<br>
+Second generation methods are used nowadays.<h3><a name="kbs1.2"></a>1.2 Programming languages</h3>
+<p>KBS are usually programmed using languages like Prolog, Lisp, C++ and
+lately <a href="http://clipsrules.sourceforge.net/">CLIPS</a>, which will be
+explained hereby. Lisp is a functional language and has been traditionally used
+for Artificial Intelligence with a very good result. In counterpart, Prolog is a
+declarative language and unlike procedural languages, it does not describe
+a sequential algorithm to solve a problem, but asserts facts and relationships through a inference engine. The
+procedural languages are oriented
+to &quot;how&quot;, while decarative ones are oriented to &quot;what&quot;. On
+the other hand, C++ is the most effective and optimized resource language,
+however it lacks inference engine and it should be implemented from scratch.<h3><a name="kbs1.3"></a>1.3
+Where are they used?</h3>
+<ul>
+  <li><b>Support system decision-making</b>
+    <p>Starting from a given problem, these systems determine the most adequate solution according to the system-included knowledge.<br>
+  </li>
+  <li><b>Configuration</b>
+    <p>They select and plan the required components needed in a particular
+    process. For example, systems that help to configure physical equipment,
+    starting from the given components and requirements.<br>
+  </li>
+  <li><b>Diagnosis</b></li>
+</ul>
+<blockquote>
+  <p>These systems determine the causes of a symptom, for example disease
+  diagnosis and troubleshooting.</p>
+</blockquote>
+<ul>
+  <li><b>Interpretation and analysis</b>
+    <p>They deal with large amount of information, interpreting it, giving an
+    explicative report and suggesting actions to take. An example of this are systems to
+    evaluate resistance of structures against earthquakes.<br>
+  </li>
+  <li><b>Monitoring</b><p>It's a particular case of interpretation and analysis,
+    that is very frequently used, so it will be considered separately. Its
+    purpose is usually monitoring a process and giving a control output, for
+    example the control of&nbsp; a nuclear power plant.<br>
+  </li>
+  <li><b>Planning</b><p>They establish the stages and resources to get a goal.
+    An example of this are systems to solve industrial logistic problems.<br>
+  </li>
+  <li><b>Intelligence interfaces</b>
+    <p>They solve situations where complex equipment is difficult to use by people,
+    for example, an autopilot.<br>
+  </li>
+  <li><b>Design</b></li>
+</ul>
+<blockquote>
+  <p>Advice in computer aided design (CAD), for example the correct voltage in an
+  electronic design program.</p>
+</blockquote>
+<h3><br>
+<a name="kbs1.4"></a>
+1.4 Knowledge-Based System structure</h3>
+<p align="center"><img border="0" src="kbs_structure.gif" width="292" height="294">
+<ul>
+  <li><b>Knowledge Base</b></li>
+</ul>
+<blockquote>
+  <p>A KBS has the human expert knowledge in a formalized and structured form;
+  this is what is known as a knowledge base. Some Knowledge-Based Systems
+  include <b>mataknowledge </b>or knowledge about knowledge, that is to say, the
+  capability to search the knowledge base and find the solution of a problem
+  in an intelligent manner, using different resolution strategies with their
+  particular conditions. This means that some criteria are defined by which the
+  system decides one or other strategy in function of initial data.<br>
+  The knowledge base can be represented as predicate
+  calculus, lists, objects, semantic networks and/or production rules. Most
+  frequently it is implemented using rules and objects.</p>
+</blockquote>
+<ul>
+  <li><b>Inference Engine</b></li>
+</ul>
+<blockquote>
+  <p>It is also called
+rule interpreter and its goal is to search and select the correct rule to be
+  applied in the
+  reasoning process.</p>
+</blockquote>
+<ul>
+  <li><b>Facts base</b></li>
+</ul>
+<blockquote>
+  <p>It is like a temporal-auxiliary memory that stores the user data, initial
+  problem data, hypothesis, and intermediate results during inference process.
+  Through it, we can know the current system status and how it was
+  reached.&nbsp;<br>
+  The best way to store this information is in relational data-bases, rather
+  than in
+  other rudimentary systems.</p>
+</blockquote>
+<ul>
+  <li><b>User Interface</b></li>
+</ul>
+<blockquote>
+<p>It allows communicating with
+the KBS, data input and output.</p>
+</blockquote>
+<h3><a name="kbs1.5"></a>1.5 Current trends</h3>
+<p>The development of Knowledge-Based Systems is not sufficiently standardized.
+Nevertheless, there is an emerging european methodology, funded as an <b><a href="http://en.wikipedia.org/wiki/ESPRIT">ESPRIT</a>
+</b>project, to develop Knowledge-Based Systems. It is called <b>KADS</b> (<i><b>Knowledge
+Adquisition Design System</b></i>). For KADS, building a Knowledge-Based System
+is basically a modeling activity. One of the most important characteristics in
+KADS is the construction of a complete knowledge model which is independent of the
+implementation. Finally, KADS is a results-oriented methodology; the results
+obtained as a product of each development activity are the only objective criteria
+for the project control and direction.</p>
+<h2><a name="kbs2"></a>2. The CommonKADS methodology</h2>
+<h3><a name="kbs2.1"></a>2.1 A brief history</h3>
+<p>CommonKADS is the leading methodology to support KBS engineering. It has been
+developed and tested by many
+companies and universities in the context of the European ESPRIT program.
+It is now the European de-facto standard for Knowledge-Based System development, and it has been adopted
+in companies in
+Europe, as well as in the US and Japan. CommonKADS also provides the methods to perform a detailed analysis
+of knowledge tasks and processes. The image below shows the evolution of
+Knowledge- Based Systems methodologies:<p align="center"><img border="0" src="history.gif" width="526" height="112"><p align="left">CommonKADS
+was originated from KADS-I project, a longer and more technically
+and staffed project, though this methodology lacked of formalization. In
+the winter of 1990 began the development of a new methodology that was
+commercially viable and covered all the KBS life cycle. The result was a new
+methodology called CommonKADS.<h3><a name="kbs2.2"></a>2.2
+Models suite</h3>
+<p>&quot;A model reflects, through detail abstraction, system characteristics in
+the real world. Each model highlights certain system characteristics and
+abstracts other ones&quot;. [DeMarco, 82].</p>
+<p>The model suite provides task decomposition in knowledge engineering, which reduces the
+complexity. While a model is built other aspects can be left for later.<br>
+The commonKADS models are shown in the image below:&nbsp;</p>
+<p>&nbsp;</p>
+<p align="center"><img border="0" src="models.gif" width="536" height="273">
+<ul>
+  <li>
+    <p align="left"><b>Organization model</b></p>
+    <p align="left">It describes and analyzes the main activities of an enterprise.<br>
+  </li>
+  <li>
+    <p align="left"><b>Task model</b></p>
+    <p align="left">It analyzes the organization's global subprocess scheme:
+    input, output, preconditions, performance criteria, resources and competences.<br>
+  </li>
+  <li>
+    <p align="left"><b>Agent model</b></p>
+    <p align="left">Agent characteristics description as task executors:
+    competences, authorizations and restrictions.<br>
+  </li>
+  <li>
+    <p align="left"><b>Communication model</b></p>
+    <p align="left">Conceptual description of agent transactions involved in a
+    task.<br>
+  </li>
+  <li>
+    <p align="left"><b>Knowledge model</b></p>
+    <p align="left">Description of knowledge types and structures used in a task
+    and the role of these knowledge components in the task resolution, but <i>implementation
+    independent</i>.<br>
+  </li>
+  <li>
+    <p align="left"><b>Design model</b></p>
+    <p align="left">Starting the previous models, this one describes the
+    technical specifications such as architecture, implementation platform,
+    software modules, etc. in order to get the functionality specified in
+    Knowledge and Communication models.&nbsp;</li>
+</ul>
+<p align="left"><br>
+According to these models, this
+article will focus on the <b><i> Knowledge model</i></b> which has the following structure, shown in the image below:<p align="left">&nbsp;<p align="center"><img border="0" src="commonkads.gif" width="254" height="384">
+<ul>
+  <li>
+    <p align="left"><b>Domain Knowledge</b></li>
+</ul>
+<blockquote>
+  <p align="left">It details the entities and concepts regarding the application
+  domain (knowledge domain), independently of how they have been used for other
+  knowledge types.
+</blockquote>
+<ul>
+  <li>
+    <p align="left"><b>Inference Knowledge</b></li>
+</ul>
+<blockquote>
+  <p align="left">It deals with the different types of inferences (reasoning elements
+  used by the expert in the task solution). An inference is defined by its input
+  and output, which are the domain roles. The inference does not allow
+  subsequent decompositions.</p>
+</blockquote>
+<ul>
+  <li>
+    <p align="left"><b>Task Knowledge</b></p>
+    <p align="left">It specifies the task goal and the method to solve it.<br>
+  </li>
+  <li>
+    <p align="left"><b>Problem solving methods</b></p>
+    <p align="left">It describes a task solving method, specifying the subtasks
+    recursive decomposition and the order to execute them.<br>
+  </li>
+  <li>
+    <p align="left"><b>Strategic knowledge</b></li>
+</ul>
+<blockquote>
+  <p align="left">It specifies the task plan. The strategic knowledge
+  consideration allows more flexible system design.</p>
+</blockquote>
+<p align="left">&nbsp;<h3><a name="kbs2.3"></a>2.3
+Roles</h3>
+<p>Like any other software project, there must be a human structure to organize,
+manage and develop the Knowledge-Based Systems. In KBS development there are six
+relevant roles involved in the system construction. The most representative ones
+are shown in the image below and explained in the following lines:</p>
+<p align="center"><img border="0" src="roles.gif" width="600" height="442">
+<ul>
+  <li>
+    <p align="left"><b>Knowledge provider / specialist</b></p>
+    <p align="left">This is the owner of human &quot;knowledge&quot;. It is
+    typically an expert in the application domain, but could be other person in
+    the organization who does not have the expert status.<br>
+  </li>
+  <li>
+    <p align="left"><b>Knowledge engineer / analyst</b></p>
+    <p align="left">One important problem for the Knowledge engineer is to find
+    the real experts previously commented. The term &quot;Knowledge
+    engineer&quot; is usually reserved for system-analysis work. It could be
+    also called &quot;knowledge analyst&quot;, therefore, these two terms can be
+    considered interchangeable.&nbsp;<br>
+    CommonKADS offers the Knowledge engineer a range of methods and tools that
+    make the analysis of a standard knowledge-intensive task relatively
+    straightforward.<br>
+  </li>
+  <li>
+    <p align="left"><b>Knowledge system developer</b></p>
+    <p align="left">The knowledge system developer is the responsible for design
+    and implementation. The developer must have a basic background of analysis
+    methods. In knowledge system development the main knowledge problems have
+    been solved by the knowledge analyst. Therefore, this role must have some
+    skills of software designers.<br>
+  </li>
+  <li>
+    <p align="left"><b>Knowledge user</b></p>
+    <p align="left">A knowledge user makes use directly or indirectly of a knowledge
+    system. His interaction with the KBS is important for the project
+    development and validation.<br>
+  </li>
+  <li>
+    <p align="left"><b>Project manager&nbsp;</b></p>
+    <p align="left">Manages the project, specially the knowledge engineer and
+    the knowledge system developer.<br>
+  </li>
+  <li>
+    <p align="left"><b>Knowledge manager</b></p>
+    <p align="left">He is in the top of the hierarchy and acts as a project manager
+    but in higher levels. It's like a knowledge strategist, cooperating,
+    defining and distributing the knowledge to coordinate all the other roles.</li>
+</ul>
+<h2><a name="kbs3"></a>3.
+Developing a KBS with CommonKADS</h2>
+<p>To illustrate the previous concepts I chose to develop a small literary assistant
+application featuring an expert system. The basic idea of the
+assistant is to assign a particular book to a reader according its age,
+education and interests. The application does not pretend to be a real world
+system but it could be a limited version of what it should be. Therefore, it could
+be used (in large-scale) in a library or book-store to advise readers
+which book they should read.&nbsp;</p>
+<h3><a name="kbs3.1"></a>3.1 Domain Knowledge</h3>
+<p>It describes the concepts and concept relationship involved in a domain (mechanic, medicine, etc.). The concept is the representative central entity in
+the domain knowledge. A concept is identified by its name and refers to
+abstract entities (patient) or specific entities (patient John). It is like the
+C++ or Java class concept.<br>
+The concepts are described by their properties or attributes, defined by their type
+and name. The property is the atom of the domain knowledge representation. The
+domain knowledge is composed of of three elements, they are the followings:</p>
+<h4><a name="kbs3.1.1"></a>3.1.1 Class diagram</h4>
+<p>We define the concepts and attributes using UML for example, although we could
+use other AI modeling languages like KIF, Ontolingua, etc.</p>
+<p align="center"><img border="0" src="classes.gif" width="539" height="325"><p align="left">After
+drawing the diagram we will write them in CML (CommonKADS Conceptual Modeling
+Language).<br>
+<br>
+<table border="0" width="100%" cellspacing="1" cellpadding="0" bgcolor="#C0C0C0">
+  <tr>
+    <td width="25%" valign="top" bgcolor="#FFFFFF" align="left">
+     CONCEPT Person;
+
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+     &nbsp;&nbsp;&nbsp;&nbsp; ATTRIBUTES:&nbsp;
+
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Name: String;
+
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Age: Int;
+
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Stage: String;
+
+      &nbsp;<br>
+     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Interests: String;<br>
+     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Education: String;&nbsp;<br>
+
+      END CONCEPT Person;
+    </td>
+    <td width="25%" valign="top" bgcolor="#FFFFFF">
+     CONCEPT Reading-type;&nbsp;<br>
+
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ATTRIBUTES:<br>
+     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      Genre: String;<br>
+     &nbsp;END CONCEPT;
+
+      <p>&nbsp;</p>
+      <p>&nbsp;</td>
+    <td width="25%" valign="top" bgcolor="#FFFFFF">CONCEPT Reader-type;<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ATTRIBUTES:<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      Level: String;<br>
+      END CONCEPT;</td>
+    <td width="25%" valign="top" bgcolor="#FFFFFF">CONCEPT Book;<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ATTRIBUTES:<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      Title: String;<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      Author: String;<br>
+      END CONCEPT;</td>
+  </tr>
+</table>
+<h4><br>
+<br>
+<a name="kbs3.1.2"></a>
+3.1.2
+Expressions relationship</h4>
+<p>They represent relations in an<i> if..then </i>rule form: a conditional
+expression in the antecedent and assigment expression in the consequent. They
+suppose a cause-effect association. In the example the relations are the
+following:</p>
+<p align="center"><img border="0" src="re1.gif" width="483" height="148"></p>
+<table border="0" width="42%" align="center">
+  <tr>
+    <td width="100%" align="center">
+      <p align="left">RULE-TYPE
+Abstraction-rules;<br>
+&nbsp;&nbsp;&nbsp; DESCRIPTION: Abstact the age of a person<br>
+&nbsp;&nbsp;&nbsp; ANTECEDENT: Person;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CARDINALITY: 1;<br>
+&nbsp;&nbsp;&nbsp; CONSEQUENT: Stage;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CARDINALITY: 1;<br>
+&nbsp;&nbsp;&nbsp; CONNECTION-SYMBOL: Abstracts;<br>
+END-RULE-TYPE Abstraction-rules;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+  </tr>
+</table>
+<p align="left"><p align="left">&nbsp;<p align="center"><img border="0" src="re2.gif" width="483" height="149">
+<table border="0" width="44%" align="center">
+  <tr>
+    <td width="100%">RULE-TYPE
+Genre-preferences;<br>
+&nbsp;&nbsp;&nbsp; DESCRIPTION: Genre selection starting from the interests<br>
+&nbsp;&nbsp;&nbsp; ANTECEDENT: Interests;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CARDINALITY: 1;<br>
+&nbsp;&nbsp;&nbsp; CONSEQUENT: Genre;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CARDINALITY: *;<br>
+&nbsp;&nbsp;&nbsp; CONNECTION-SYMBOL: Prefers;<br>
+END-RULE-TYPE Genre-preferences;</td>
+  </tr>
+</table>
+<p align="left">&nbsp;&nbsp;<p align="center"><img border="0" src="re3.gif" width="483" height="154">
+<table border="0" width="42%" align="center">
+  <tr>
+    <td width="100%">RULE-TYPE
+Level-assignation;<br>
+&nbsp;&nbsp;&nbsp; DESCRIPTION: Assigns a level according the education<br>
+&nbsp;&nbsp;&nbsp; ANTECEDENT: Education;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CARDINALITY: 1;<br>
+&nbsp;&nbsp;&nbsp; CONSEQUENT: Level;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CARDINALITY: 1;<br>
+&nbsp;&nbsp;&nbsp; CONNECTION-SYMBOL: Assigns;<br>
+END-RULE-TYPE Level-assignation;&nbsp;&nbsp;</td>
+  </tr>
+</table>
+<p align="left">&nbsp;
+<p align="center"><img border="0" src="re4.gif" width="483" height="150"></p>
+<table border="0" width="42%" align="center">
+  <tr>
+    <td width="100%">RULE-TYPE
+Assign-book;<br>
+&nbsp;&nbsp;&nbsp; DESCRIPTION: Assign books<br>
+&nbsp;&nbsp;&nbsp; ANTECEDENT: Genre and Level;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CARDINALITY: *;<br>
+&nbsp;&nbsp;&nbsp; CONSEQUENT: Book;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CARDINALITY: *;<br>
+&nbsp;&nbsp;&nbsp; CONNECTION-SYMBOL: Final assignation;<br>
+END-RULE-TYPE Assign-book;<br>
+<br>
+&nbsp;&nbsp;</td>
+  </tr>
+</table>
+<p align="left">&nbsp;<h4><a name="kbs3.1.3"></a>3.1.3 Knowledge-base</h4>
+<p>The knowledge-base gets the pairs through different generic rules previously
+defined. Here below is a sample instance of the knowledge-base:</p>
+<table border="0" width="100%" bgcolor="#FFFFFF">
+  <tr>
+    <td width="100%" bgcolor="#FBEDBB">
+<p>KNOWLEDGE-BASE Literary-assistant-base<br>
+USES<br>
+Abstraction-rules FROM literary-assistant-scheme;<br>
+Genre-preferences FROM literary-assistant-scheme;<br>
+Level-assignation FROM literary-assistant-scheme;<br>
+Assign-book FROM literary-assistant-scheme;<br>
+<br>
+EXPRESSIONS<br>
+<br>
+/* Select stage */<br>
+<br>
+Person.age &lt;= 13&nbsp;<br>
+	ABSTRACT Person.stage = CHILD<br>
+<br>
+Person.age > 13 AND Person.age &lt;= 19&nbsp;<br>
+	ABSTRACT Person.stage = TEENAGER<br>
+<br>
+Person.age > 19 AND Person.age &lt;= 40<br>
+	ABSTRACT Person.stage = YOUNG<br>
+<br>
+Person.age &gt; 40<br>
+	ABSTRACT Person.stage = ADULT</p>
+<p>/* Discriminate interests */</p>
+<p>Person.interests = "Music"  OR Person.interests = "Painting" OR&nbsp;<br>
+Person.interests = "Ciema"  OR  Person.interests = "Sculpture"&nbsp;<br>
+PREFER reading-type.genre = ART<br>
+.<br>
+.<br>
+.</p>
+<p>/* Adjust reader level */<br>
+<br>
+Person.education = SECONDARY AND Person.stage = YOUNG<br>
+SELECT-LEVEL reader-type.level = ADVANCED<br>
+<br>
+Person.education = SECONDARY AND Person.stage = ADULT&nbsp;<br>
+SELECT-LEVEL reader-type.level = ADVANCED<br>
+<br>
+Person.education = UNIVERSITARY&nbsp;<br>
+SELECT-LEVEL reader-type.level = ADVANCED<br>
+.<br>
+.<br>
+.<br>
+/* Science section */<br>
+<br>
+reader-type.level = CHILD AND reading-type.genre = SCIENCE<br>
+SELECT-BOOK Book.title = "Arithmetics handouts"<br>
+<br>
+reader-type.level = BASIC AND reading-type.genre = SCIENCE<br>
+SELECT-BOOK Book.title = "Basic arithmetics and geometry "<br>
+<br>
+reader-type.level = INTERMEDIATE AND reading-type.genre = SCIENCE<br>
+SELECT-BOOK Book.title = "Derivatives and integrals"<br>
+<br>
+reader-type.level = ADVANCED AND reading-type.genre = SCIENCE<br>
+SELECT-BOOK Book.title = "Differential equations"<br>
+.<br>
+.<br>
+.</p>
+<p>END KNOWLEDGE-BASE Literary-assistant-base;</p>
+    </td>
+  </tr>
+</table>
+<h3><a name="kbs3.2"></a>3.2 Inference Knowledge</h3>
+<p>The inference knowledge refers to the subtask sets that do not need
+subsequent decomposition. They are the reasoning primitives and the elemental
+reasoning steps for task resolution. They are described by specifying the
+performed function and their input and output. It's important to note that the
+inference description does not imply how it is performed, because it depends
+strongly on the particular application and domain.<br>
+<br>
+</p>
+<h4><a name="kbs3.2.1"></a>3.2.1 Inference scheme</h4>
+<p>As explained before, the inference is the basic reasoning step, but it depends on
+the domain roles:</p>
+<p><i>Static roles</i>: They are the domain elements that are used in the reasoning
+process but are not affected by it.</p>
+<p><i>Dynamic roles</i>: They are the inference input and output that sign the
+domain elements that will be used during the reasoning process.</p>
+<p align="center"><img border="0" src="infe1.gif" width="431" height="119">
+<p align="center">&nbsp;
+<table border="0" width="42%" align="center">
+  <tr>
+    <td width="100%">INFERENCE Abstract<br>
+      &nbsp;&nbsp;&nbsp;&nbsp; ROLES<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; INPUT: Person;<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; OUTPUT: Stage;<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; STATIC: Abstraction-model;<br>
+      SPECIFICATION:<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot;Abstracts the age of a person&quot;<br>
+      END INFERENCE Abstract;<br>
+    </td>
+  </tr>
+</table>
+<p align="center"><img border="0" src="infe2.gif" width="431" height="119">
+<p align="center">&nbsp;<table border="0" width="42%" align="center">
+  <tr>
+    <td width="100%">INFERENCE Select-genre<br>
+      &nbsp;&nbsp;&nbsp;&nbsp; ROLES<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; INPUT: Interest;<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; OUTPUT: Genre;<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; STATIC: Preferences-model;<br>
+      SPECIFICATION:<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot;Selects a genre according the
+      user's interests&quot;<br>
+      END INFERENCE Abstract;<br>
+    </td>
+  </tr>
+</table>
+<p align="center"><img border="0" src="infe3.gif" width="435" height="159">
+<p align="center">&nbsp;<table border="0" width="42%" align="center">
+  <tr>
+    <td width="100%">INFERENCE Select-level<br>
+      &nbsp;&nbsp;&nbsp;&nbsp; ROLES<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; INPUT: Education,Stage;<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; OUTPUT: Level;<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; STATIC: Level-model;<br>
+      SPECIFICATION:<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot;Selects a level according the user's
+      education and stage&quot;<br>
+      END INFERENCE Abstract;<br>
+    </td>
+  </tr>
+</table>
+<p align="center"><img border="0" src="infe4.gif" width="435" height="153">
+<p align="center">&nbsp;<table border="0" width="42%" align="center">
+  <tr>
+    <td width="100%">INFERENCE Select-book<br>
+      &nbsp;&nbsp;&nbsp;&nbsp; ROLES<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; INPUT: Genre, Level;<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; OUTPUT: Book;<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; STATIC: Book-selection-model;<br>
+      SPECIFICATION:<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot;Assigns a book according the user's
+      level and selected genres&quot;<br>
+      END INFERENCE Abstract;<br>
+    </td>
+  </tr>
+</table>
+<p>&nbsp;<h4><a name="kbs3.2.2"></a>3.2.2
+Domain connection</h4>
+<p>After modelling the inference knowledge it is necessary to describe its
+connection with the elements of the knowledge domain. In the example it results
+as follows:</p>
+<p align="center"><img border="0" src="con1.gif" width="432" height="220">
+<table border="0" width="100%" cellspacing="1" cellpadding="0" bgcolor="#C0C0C0">
+  <tr>
+    <td width="33%" bgcolor="#FFFFFF" valign="top">KNOWLEDGE-ROLE Person;<br>
+      TYPE: DYNAMIC;<br>
+      DOMAIN-MAPPING: Person;<br>
+      END KNOWLEDGE-ROLE&nbsp; Person;</td>
+    <td width="33%" bgcolor="#FFFFFF">KNOWLEDGE-ROLE Abstraction-model;<br>
+      TYPE: STATIC;<br>
+      DOMAIN-MAPPING:Abstraction-rules FROM literary-assistant-scheme; ;<br>
+      END KNOWLEDGE-ROLE&nbsp; Abstraction-model;
+      <p>&nbsp;</td>
+    <td width="34%" bgcolor="#FFFFFF" valign="top">KNOWLEDGE-ROLE Stage;<br>
+      TYPE: DYNAMIC;<br>
+      DOMAIN-MAPPING: Stage;<br>
+      END KNOWLEDGE-ROLE&nbsp; Stage;</td>
+  </tr>
+</table>
+<p align="center">&nbsp;<p align="center"><img border="0" src="con2.gif" width="431" height="220">
+<p align="center">&nbsp;
+<table border="0" width="100%" cellspacing="1" cellpadding="0" bgcolor="#C0C0C0">
+  <tr>
+    <td width="33%" bgcolor="#FFFFFF" valign="top">KNOWLEDGE-ROLE Interest;<br>
+      TYPE: DYNAMIC;<br>
+      DOMAIN-MAPPING: Interest;<br>
+      END KNOWLEDGE-ROLE&nbsp; Interest;</td>
+    <td width="33%" bgcolor="#FFFFFF">KNOWLEDGE-ROLE Preferences-model;<br>
+      TYPE: STATIC;<br>
+      DOMAIN-MAPPING:Genre preferences FROM literary-assistant-scheme; ;<br>
+      END KNOWLEDGE-ROLE&nbsp; Preferences-model;
+      <p>&nbsp;</td>
+    <td width="34%" bgcolor="#FFFFFF" valign="top">KNOWLEDGE-ROLE Genre;<br>
+      TYPE: DYNAMIC;<br>
+      DOMAIN-MAPPING: Genre;<br>
+      END KNOWLEDGE-ROLE&nbsp; Genre;</td>
+  </tr>
+</table>
+<p align="center">&nbsp;<p align="center"><img border="0" src="con3.gif" width="524" height="220"><p align="center">&nbsp;
+<p align="center">&nbsp;
+<table border="0" width="100%" cellspacing="1" cellpadding="0" bgcolor="#C0C0C0">
+  <tr>
+    <td width="20%" bgcolor="#FFFFFF" valign="top">KNOWLEDGE-ROLE Education;<br>
+      TYPE: DYNAMIC;<br>
+      DOMAIN-MAPPING: Education;<br>
+      END KNOWLEDGE-ROLE&nbsp; Education;</td>
+    <td width="20%" bgcolor="#FFFFFF" valign="top">KNOWLEDGE-ROLE Stage;<br>
+      TYPE: DYNAMIC;<br>
+      DOMAIN-MAPPING: Education;<br>
+      END KNOWLEDGE-ROLE&nbsp; Education;</td>
+    <td width="20%" bgcolor="#FFFFFF">KNOWLEDGE-ROLE Level-model;<br>
+      TYPE: STATIC;<br>
+      DOMAIN-MAPPING:Level-assignation FROM literary-assistant-scheme;&nbsp;<br>
+      END KNOWLEDGE-ROLE&nbsp; Level-model;
+      <p>&nbsp;</td>
+    <td width="20%" bgcolor="#FFFFFF" valign="top">KNOWLEDGE-ROLE Level;<br>
+      TYPE: DYNAMIC;<br>
+      DOMAIN-MAPPING: Level;<br>
+      END KNOWLEDGE-ROLE&nbsp; Level;</td>
+  </tr>
+</table>
+<p align="center">&nbsp;<p align="center"><img border="0" src="con4.gif" width="527" height="220"><p align="center">&nbsp;
+<p align="center">&nbsp;
+<table border="0" width="100%" cellspacing="1" cellpadding="0" bgcolor="#C0C0C0">
+  <tr>
+    <td width="20%" bgcolor="#FFFFFF" valign="top">KNOWLEDGE-ROLE Genre;<br>
+      TYPE: DYNAMIC;<br>
+      DOMAIN-MAPPING: Genre-and-Level;<br>
+      END KNOWLEDGE-ROLE&nbsp; Genre;</td>
+    <td width="20%" bgcolor="#FFFFFF" valign="top">KNOWLEDGE-ROLE Level;<br>
+      TYPE: DYNAMIC;<br>
+      DOMAIN-MAPPING: Genre-and-Level;<br>
+      END KNOWLEDGE-ROLE&nbsp; Level;</td>
+    <td width="20%" bgcolor="#FFFFFF">KNOWLEDGE-ROLE Book-selection-model;<br>
+      TYPE: STATIC;<br>
+      DOMAIN-MAPPING:Assign-book FROM literary-assistant-scheme;<br>
+      END KNOWLEDGE-ROLE&nbsp; Book-selection-model;
+      <p>&nbsp;</td>
+    <td width="20%" bgcolor="#FFFFFF" valign="top">KNOWLEDGE-ROLE Book;<br>
+      TYPE: DYNAMIC;<br>
+      DOMAIN-MAPPING: Book;<br>
+      END KNOWLEDGE-ROLE&nbsp; Book;</td>
+  </tr>
+</table>
+<p align="center">&nbsp;<h3><a name="kbs3.3"></a>3.3
+Task Knowledge</h3>
+<p>The task is a<b> general objective </b>(diagnose, planify,...) and to get it
+a <b>method</b> 
+is used which implies a subtask decomposition in more elemental
+tasks and a <b>control </b>to sequence them in task runtime. When dividing the subtasks
+recursively we get the last level of elemental tasks that are not
+decomposable anymore and they are called inferences. The control method
+knowledge is essential for the final implementation of a task. It specifies a
+clear, precise and unequivocal procedure to link the inferences. In the
+following image we can see the task diagram and its subtask decomposition in
+inferences.</p>
+<p align="center"><img border="0" src="task.gif" width="488" height="238">
+<table border="0" width="100%" bgcolor="#FBEDBB">
+  <tr>
+    <td width="100%">TASK Literary-assistant<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; GOAL:<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      &quot;Advice a book to a reader&quot;;<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ROLES:<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      INPUT:<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      Person: &quot;A person who wants to read a book&quot;;<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      OUTPUT:<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      Book: &quot;Some books to read&quot;;
+      <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; SPEC:<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      &quot;Assign a book to a person according to its education and age&quot;;<br>
+      END TASK Literary-assistant;&nbsp;&nbsp;</p>
+    </td>
+  </tr>
+</table>
+<br>
+<table border="0" width="100%" bgcolor="#FBEDBB">
+  <tr>
+    <td width="100%">TASK-METHOD Literary-assistant-sequential;<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; REALIZES:<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      &quot;Literary assistant&quot;;<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; DECOMPOSITION:<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      INFERENCES: Abstract, Select-genre, Select-level, Select-book;<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      TRANSFER-FUNCTIONS:;<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ROLES:<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      INTERMEDIATE:<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      Abstraction-model:&nbsp;<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      Preferences-model:&nbsp;<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      Level-model:&nbsp;<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      Book-selection-model:<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      CONTROL-STRUCTURE:<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      Abstract(+Stage,-Person,-Abstraction-model);<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      Select-genre(+Genre,-Interest,-Preferences-model);<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      Select-level(+Level,-Education,-Stage,-Level-model);<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      Select-Book(+Book,-Genre,-Level,-Book-selection-model);<br>
+      END-TASK-METHOD Literary-assistant-sequential;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+  </tr>
+</table>
+<h2><a name="kbs4"></a>4.
+Implementation (sample)</h2>
+
+<p>To implement the example, I chose to use <a href="http://clipsrules.sourceforge.net/">CLIPS</a>,
+an expert system tool created in 1985 with these features:</p>
+
+<ul>
+  <li>
+    <p>Knowledge representation: CLIPS provides a cohesive tool for handling a
+    wide variety of knowledge with support for three different programming
+    paradigms: rule-based, object-oriented and procedural.&nbsp;</p>
+  </li>
+  <li>
+    <p>Portability: CLIPS is written in C for portability and speed and has been
+    installed on many different operating systems without code changes.
+    Operating systems on which CLIPS has been tested include <b>Windows XP</b>, <b>MacOS
+    X</b>, and <b>Unix</b>. CLIPS can be ported to any system which has an ANSI
+    compliant C or C++ compiler. CLIPS comes with all source code which can be
+    modified or tailored to meet user-specific needs.</p>
+  <li>
+    <p>Integration/Extensibility: CLIPS can be embedded within procedural code,
+    called as a subroutine, and integrated with languages such as <b>C, C++,
+    Java, FORTRAN</b> and<b> ADA</b>.</p>
+  <li>
+    <p>Verification/Validation: CLIPS includes a number of features to support
+    the verification and validation of expert systems including support for
+    modular design and partitioning of a knowledge base, static and dynamic
+    constraint checking of slot values and function arguments, and semantic
+    analysis of rule patterns to determine if inconsistencies could prevent a
+    rule from firing or generate an error.</p>
+  <li>
+    <p>Fully documented</p>
+  <li>
+    <p>Low cost: CLIPS is maintained as public domain software.</p>
+  </li>
+</ul>
+<p>Here below is a sample of the complete source code included in this article
+and written in CLIPS:</p>
+
+<pre>; Select level according to education
+
+(defrule select_level
+	?f1&lt;-(start_level)
+	(person (education ?edu)(stage ?stg))
+	(level (education ?edu)(stage ?stg)(level ?lev))
+	=&gt;
+	(assert (reader-type (level ?lev)))
+	(retract ?f1)
+)	
+
+; Find interests in interest list
+		
+(deffunction has_person (?mat $?interests)
+	(return (member$ ?mat $?interests))
+)	
+		
+; Select genre according to interests
+		
+(defrule select_genre
+	(interests)
+	(person (interests $?interests))
+	(matter (interest $?cat)(genre ?genre))
+	=&gt;
+	(bind ?i 1)
+	(while (&lt;= ?i (length$ $?interests))
+		(bind ?mat (nth$ ?i $?interests))
+		(if (has_person ?mat $?cat) then
+			(assert (reading-type (genre ?genre)))
+		)
+	(bind ?i (+ ?i 1))	
+	)
+)	
+			
+; Select book according to interests 
+
+(defrule recommend_book
+	(reader-type (level ?level))
+	(reading-type (genre ?genre))
+	(category (level ?level)(genre ?genre)(book ?book))
+	=&gt;
+	(printout t &quot;According to this data, you should read: &quot; ?book crlf)
+)	
+</pre>
+
+<h2 align="center"><img border="0" src="screen.gif" width="600" height="398"></h2>
+<p align="left">The image above presents the execution of the application
+in CLIPS. Note that if you type an age and a education that do not have logic
+match, the system will not return any result. For example, if you type age 50 and
+education Child the system will not return any suggestion.</p>
+
+<h2><a name="kbs5"></a>5. C++ embedding</h2>
+<p>The simplest form to embed the CLIPS source into C++ is to include the header
+file &quot;clips.h&quot; through the <code>extern</code> keyword in the project. Next,
+we will call <code>InitializeEnvironment</code> to run CLIPS engine and call&nbsp;
+<code>Load </code>to&nbsp;load the the .<i>clp</i> file containing the source.
+Finally, call <code>reset</code>  and <code>run</code> to start the application.
+Below, is the code snippet to perform this:</p>
+<pre>#include &lt;iostream&gt;
+
+extern &quot;C&quot;
+{
+	#include &quot;clips.h&quot;	
+}
+
+using namespace std;
+
+int main(int argc, char* argv[])
+{
+	InitializeEnvironment();
+	Load(&quot;literary assistant.clp&quot;); // Insert the CLIPS source code here
+	Reset();
+	Run(-1L);
+	cin.get();
+	return 0;
+}</pre>
+
+<h2><a name="kbs6"></a>6. Further reading and references</h2>
+<blockquote>
+  <ul>
+    <li>
+      <p dir="ltr"><i>Knowledge engineering and management: the CommonKADS
+      methodology.</i><br>
+      [Guus Schreiber][ Hans Akkermans][Anjo Anjewierden][Robert de Hoog][Nigel
+      Shadbolt] et al.<br>
+      Massachusetts Institute of Technology.<br>
+    </li>
+    <li>
+      <p dir="ltr"><a href="http://www.csae.map.es/csi/silice/Sgexpt.html"><i>http://www.csae.map.es/csi/silice/Sgexpt.html</i></a><br>
+      [Consejo Superior de Administraci\F3n Electr\F3nica - Goverment of Spain]<br>
+    </li>
+    <li>
+      <p dir="ltr"><i>Basic aspects of the Artificial Intelligence.</i><br>
+      [J. Mira][A.E. Delgado][ J.G. Boticario][ F.J. Diez]<br>
+      UNED - National University for Distance Education.<br>
+    </li>
+    <li>
+      <p dir="ltr"><i>Methodological aspects of the KBS development.</i><br>
+      [J. Mira][R. Mart\EDnez Tom\E1s]<br>
+      UNED - National University for Distance Education.<br>
+    </li>
+    <li>
+      <p dir="ltr"><i>CLIPS a tool for building expert systems.</i><br>
+      <a href="http://clipsrules.sourceforge.net/">http://clipsrules.sourceforge.net/</a></li>
+  </ul>
+</blockquote>
+</body>
+
+</html>

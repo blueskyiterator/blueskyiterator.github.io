@@ -1,0 +1,744 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
+            "http://www.w3.org/TR/REC-html40/loose.dtd">
+<HTML>
+<HEAD>
+<TITLE>article</TITLE>
+
+<META http-equiv="Content-Type" content="text/html; charset=US-ASCII">
+<META name="GENERATOR" content="Microsoft FrontPage 4.0">
+<STYLE type="text/css">
+.li-itemize{margin:1ex 0ex;}
+.li-enumerate{margin:1ex 0ex;}
+.dd-description{margin:0ex 0ex 1ex 4ex;}
+.dt-description{margin:0ex;}
+.toc{list-style:none;}
+.thefootnotes{text-align:left;margin:0ex;}
+.dt-thefootnotes{margin:0em;}
+.dd-thefootnotes{margin:0em 0em 0em 2em;}
+.footnoterule{margin:1em auto 1em 0px;width:50%;}
+.caption{padding-left:2ex; padding-right:2ex; margin-left:auto; margin-right:auto}
+.title{margin:2ex auto;text-align:center}
+.center{text-align:center;margin-left:auto;margin-right:auto;}
+.flushleft{text-align:left;margin-left:0ex;margin-right:auto;}
+.flushright{text-align:right;margin-left:auto;margin-right:0ex;}
+DIV TABLE{margin-left:inherit;margin-right:inherit;}
+PRE{text-align:left;margin-left:0ex;margin-right:auto;}
+BLOCKQUOTE{margin-left:4ex;margin-right:4ex;text-align:left;}
+TD P{margin:0px;}
+.boxed{border:1px solid black}
+.textboxed{border:1px solid black}
+.vbar{border:none;width:2px;background-color:black;}
+.hbar{border:none;height:2px;width:100%;background-color:black;}
+.hfill{border:none;height:1px;width:200%;background-color:black;}
+.vdisplay{border-collapse:separate;border-spacing:2px;width:auto; empty-cells:show; border:2px solid red;}
+.vdcell{white-space:nowrap;padding:0px;width:auto; border:2px solid green;}
+.display{border-collapse:separate;border-spacing:2px;width:auto; border:none;}
+.dcell{white-space:nowrap;padding:0px;width:auto; border:none;}
+.dcenter{margin:0ex auto;}
+.vdcenter{border:solid #FF8000 2px; margin:0ex auto;}
+.minipage{text-align:left; margin-left:0em; margin-right:auto;}
+.marginpar{border:solid thin black; width:20%; text-align:left;}
+.marginparleft{float:left; margin-left:0ex; margin-right:1ex;}
+.marginparright{float:right; margin-left:1ex; margin-right:0ex;}
+.theorem{text-align:left;margin:1ex auto 1ex 0ex;}
+.part{margin:2ex auto;text-align:center}
+</STYLE>
+</HEAD>
+<BODY >
+<!--HEVEA command line is: c:\apps\hevea\hevea.exe -exec xxdate.exe article.tex -->
+<!--CUT DEF section 1 --><!--TOC section Contents-->
+<H2 CLASS="section"><!--SEC ANCHOR -->Contents</H2><!--SEC END --><UL CLASS="toc"><LI CLASS="li-toc">
+<A HREF="#htoc1">1&#XA0;&#XA0;Introduction</A>
+<UL CLASS="toc"><LI CLASS="li-toc">
+<A HREF="#htoc2">1.1&#XA0;&#XA0;Interface Definition Language (IDL)</A>
+</LI><LI CLASS="li-toc"><A HREF="#htoc3">1.2&#XA0;&#XA0;Mapping IDL to a Programming Language</A>
+</LI><LI CLASS="li-toc"><A HREF="#htoc4">1.3&#XA0;&#XA0;IDL Compilers</A>
+</LI><LI CLASS="li-toc"><A HREF="#htoc5">1.4&#XA0;&#XA0;Making a remote call</A>
+</LI><LI CLASS="li-toc"><A HREF="#htoc6">1.5&#XA0;&#XA0;CORBA Services</A>
+</LI></UL>
+</LI><LI CLASS="li-toc"><A HREF="#htoc7">2&#XA0;&#XA0;Developing a simple client-server application</A>
+<UL CLASS="toc"><LI CLASS="li-toc">
+<A HREF="#htoc8">2.1&#XA0;&#XA0;The business logic domain</A>
+</LI><LI CLASS="li-toc"><A HREF="#htoc9">2.2&#XA0;&#XA0;Writing the IDL</A>
+</LI><LI CLASS="li-toc"><A HREF="#htoc10">2.3&#XA0;&#XA0;Generating the skeleton and the stub</A>
+</LI><LI CLASS="li-toc"><A HREF="#htoc11">2.4&#XA0;&#XA0;Implementing the servant class</A>
+</LI><LI CLASS="li-toc"><A HREF="#htoc12">2.5&#XA0;&#XA0;Creating the server</A>
+</LI><LI CLASS="li-toc"><A HREF="#htoc13">2.6&#XA0;&#XA0;Implementing the client</A>
+</LI><LI CLASS="li-toc"><A HREF="#htoc14">2.7&#XA0;&#XA0;Running the client-server application</A>
+</LI></UL>
+</LI><LI CLASS="li-toc"><A HREF="#htoc15">3&#XA0;CORBA benefits and drawbacks</A>
+</LI><LI CLASS="li-toc"><A HREF="#htoc16">4&#XA0;&#XA0;Further reading</A>
+</LI><LI CLASS="li-toc"><A HREF="#htoc17">5&#XA0;&#XA0;Acknowledgements</A>
+</LI></UL><!--TOC section Introduction-->
+<H1>A Simple C++ Client/Server in CORBA</H1> 
+<H2 CLASS="section"><!--SEC ANCHOR --><A NAME="htoc1">1</A>&#XA0;&#XA0;Introduction</H2><!--SEC END --><P>The <A HREF="http://www.omg.org">Object Management Group</A> is a
+not-for-profit organization that promotes the use of object-oriented
+technologies. Among other things, it defines the UML and CORBA
+standards.</P><P>CORBA is an acronym for <EM>Common ORB Architecture</EM>. The phrase
+<EM>common architecture</EM> means a technical standard, so CORBA is
+simply a technical standard for something called an ORB.</P><P>In turn, ORB is an acronym for <EM>object request broker</EM>, which is an
+object-oriented version of an older technology called <EM>remote
+procedure call</EM> (RPC). An ORB or RPC is a mechanism for invoking
+operations on an object (or calling a procedure) in a different
+(&#X201C;remote&#X201D;) process that may be running on the same, or a different,
+computer. At a programming level, these &#X201C;remote&#X201D; calls look similar to
+&#X201C;local&#X201D; calls. In fact, CORBA makes it possible for a client
+application written in one programming language, say, Java, to make a
+remote call to a server implemented in a different programming language,
+say, C++. This language independence arises because the public
+interfaces of a server application are defined in an IDL file and CORBA
+defines mappings from IDL to many programming languages, including C,
+C++, Java, COBOL, Ada, SmallTalk and Python.</P><!--TOC subsection Interface Definition Language (IDL)-->
+<H3 CLASS="subsection"><!--SEC ANCHOR --><A NAME="htoc2">1.1</A>&#XA0;&#XA0;Interface Definition Language (IDL)</H3><!--SEC END --><P>An IDL file defines the public <EM>application programming interface</EM>
+(API) that is exposed by objects in a server application. The
+<EM>type</EM> of a CORBA object is called an <CODE>interface</CODE>, which is
+similar in concept to a C++ <CODE>class</CODE> or a Java <CODE>interface</CODE>. An
+example IDL file is shown below.</P><PRE CLASS="verbatim">module Finance {
+  typedef sequence&lt;string&gt; StringSeq;
+  struct AccountDetails {
+    string     name;
+    StringSeq  address;
+    long       account_number;
+    double     current_balance;
+  };
+  exception insufficientFunds { };
+  interface Account {
+    void deposit(in double amount);
+    void withdraw(in double amount) raises(insufficientFunds);
+    readonly attribute AccountDetails details;
+  };
+};
+</PRE><P>As the above example shows, IDL types may be grouped into a
+<CODE>module</CODE>. This construct serves purpose similar to a C++
+<CODE>namespace</CODE> or a Java <CODE>package</CODE>: it places a prefix on the
+names of types to prevent namespace pollution. The scoping operator in
+IDL is &#X201C;<CODE>::</CODE>&#X201D;. For example, <CODE>Finance::Account</CODE> is the
+fully-scoped name of the <CODE>Account</CODE> type defined in the
+<CODE>Finance</CODE> module.</P><P>An IDL <CODE>interface</CODE> may contain operations and attributes (and, if
+you want, also nested types). Many people mistakingly assume that an
+<CODE>attribute</CODE> is similar in concept to an <EM>instance variable</EM> in
+C++ (a <EM>field</EM> in Java). This is wrong. An <CODE>attribute</CODE> is
+simply syntactic sugar for a pair of get-&#XA0;and set-style operations. An
+<CODE>attribute</CODE> can be <CODE>readonly</CODE>, in which case it maps to just a
+get-style operation.</P><P>The parameters of an operation have a specified direction, which can be
+<CODE>in</CODE> (meaning that the parameter is passed from the client to the
+server), <CODE>out</CODE> (the parameter is passed from the server back to the
+client) or <CODE>inout</CODE> (the parameter is passed in both
+directions). Operations can also have a return value. An operation can
+<EM>raise</EM> (throw) an exception if something goes wrong. There are
+over 30 predefined exception types, called <EM>system</EM> exceptions,
+that all operations can throw, although in practice system exceptions
+are raised by the CORBA runtime system much more frequently than by
+application code. In addition to the pre-defined system exceptions, new
+exception types can be defined in an IDL file. These are called
+<EM>user-defined</EM> exceptions. A <CODE>raises</CODE> clause on the signature
+of an operation specifies the user-defined exceptions that it might
+throw.</P><P>Parameters to an operation (and the return value) can be one of the
+built-in types&#X2014;for example, <CODE>string</CODE>, <CODE>boolean</CODE> or
+<CODE>long</CODE>&#X2014;or a &#X201C;user-defined&#X201D; type that is declared in an IDL
+file. User-defined types can be any of the following:
+</P><UL CLASS="itemize"><LI CLASS="li-itemize">
+	A <CODE>struct</CODE>. This is similar to a C/C++ <CODE>struct</CODE> or a
+	Java <CODE>class</CODE> that contains only public fields.</LI><LI CLASS="li-itemize">	A <CODE>sequence</CODE>. This is a collection type. It is like a
+	one-dimensional array that can grow or shrink. The IDL-to-C++
+	mapping predates the C++ standard template library so,
+	unfortunately, an IDL <CODE>sequence</CODE> does <EM>not</EM> map to a
+	<CODE>std::vector</CODE>. Instead, the IDL-to-C++ mapping defines its
+	own vector-like data type.</LI><LI CLASS="li-itemize">	An <EM>array</EM>. The dimensions of an IDL array are specified
+	in the IDL file, so an array is of fixed size, that is, it
+	cannot grow or shrink at runtime. Arrays are rarely used in
+	IDL. The <CODE>sequence</CODE> type is more flexible and so is more
+	commonly used.</LI><LI CLASS="li-itemize">	A <CODE>typedef</CODE>. This defines a new name for an existing type.
+	For example, the statement below defines <CODE>age</CODE> that is
+	represented as a <CODE>short</CODE>:
+	<PRE CLASS="verbatim"> typedef short age;
+ </PRE>		A common, and very important, use of <CODE>typedef</CODE> is to
+	associate a name with a sequence or array declaration. For
+	example:
+	<PRE CLASS="verbatim"> typedef sequence&lt;string&gt; StringSeq;
+ </PRE></LI><LI CLASS="li-itemize">	A <CODE>union</CODE>. This type can hold one of several values at
+	runtime, for example:
+	<PRE CLASS="verbatim"> union Foo switch(short) {
+   case 1: boolean  boolVal;
+   case 2: long     longVal;
+   case 3: string   stringVal;
+ };
+ </PRE>		An instance of <CODE>Foo</CODE> could hold a <CODE>boolean</CODE>, a
+	<CODE>long</CODE> or a <CODE>string</CODE>. The case label indicates which
+	value is currently active.</LI><LI CLASS="li-itemize">	An <CODE>enum</CODE> is conceptually similar to a collection of
+	constant integer declarations. For example:
+	<PRE CLASS="verbatim"> enum color {red, green, blue};
+ </PRE>	Internally, CORBA uses integer values to represent different
+	<CODE>enum</CODE> values.
+</LI></UL><!--TOC subsection Mapping IDL to a Programming Language-->
+<H3 CLASS="subsection"><!--SEC ANCHOR --><A NAME="htoc3">1.2</A>&#XA0;&#XA0;Mapping IDL to a Programming Language</H3><!--SEC END --><P>As already mentioned, IDL is used to define the public API that is
+exposed by objects in a server application. IDL defines this API in a
+way that is <EM>independent</EM> of any particular programming language.
+However, for CORBA to be useful, there must be a mapping from IDL to a
+particular programming language. For example, the IDL-to-C++ mapping
+enables people to develop CORBA applications in C++, while the
+IDL-to-Java mapping enables people to develop CORBA applications in
+Java.</P><P>The CORBA standard currently defines mappings from IDL to the following
+programming languages: C, C++, Java, Ada, Smalltalk, COBOL, PL/I, LISP,
+Python and IDLScript. These officially-endorsed language mappings
+provide source-code portability of applications across different CORBA
+products. There are unofficial mappings for a few other languages, such
+as Eiffel, Tcl and Perl.</P><!--TOC subsection IDL Compilers-->
+<H3 CLASS="subsection"><!--SEC ANCHOR --><A NAME="htoc4">1.3</A>&#XA0;&#XA0;IDL Compilers</H3><!--SEC END --><P>An IDL compiler translates IDL definitions (for example, <CODE>struct</CODE>,
+<CODE>union</CODE>, <CODE>sequence</CODE> and so on) into similar definitions in a
+programming language, such as C++, Java, Ada or Cobol. In addition, for
+each IDL <CODE>interface</CODE>, the IDL compiler generates both <EM>stub
+code</EM>&#X2014;also called <EM>proxy types</EM>&#X2014;and <EM>skeleton code</EM>. These
+terms often cause confusion, so I explain them below:
+</P><UL CLASS="itemize"><LI CLASS="li-itemize">
+	A dictionary definition of <EM>stub</EM> is &#X201C;the short end
+	remaining after something bigger has been used up, for example,
+	a pencil stub or a cigarette stub&#X201D;. In traditional
+	(non-distributed) programming, a <EM>stub&#XA0;procedure</EM> is a
+	dummy implementation of a procedure that is used to prevent
+	&#X201C;undefined label&#X201D; errors at link time. In a distributed
+	middleware system like CORBA, remote calls are implemented by
+	the client making a local call upon a <EM>stub</EM>
+	procedure/object. The stub uses an inter-process communication
+	mechanism (such as TCP/IP sockets) to transmit the request to a
+	server process and receive back the reply.</LI><LI CLASS="li-itemize">	
+	The term <EM>proxy</EM> is often used instead of
+	<EM>stub</EM>. A dictionary definition of <EM>proxy</EM> is &#X201C;a
+	person authorized to act for another&#X201D;. A CORBA proxy is simply
+	a client-side object that acts on behalf of the &#X201C;real&#X201D; object
+	in a server process. When the client application invokes an
+	operation on a proxy, the proxy uses an inter-process
+	communication mechanism to transmit the request to the &#X201C;real&#X201D;
+	object in a server process; then the proxy waits to receive the
+	reply and passes back this reply to the application-level code
+	in the client.</LI><LI CLASS="li-itemize">	The term <EM>skeleton&#XA0;code</EM> refers to the server-side
+	code for reading incoming requests and dispatching them to
+	application-level objects. The term <EM>skeleton</EM> may seem
+	like a strange choice. However, use of the word <EM>skeleton</EM>
+	is not limited to discussions about bones; more generally, it
+	means a &#X201C;supporting infrastructure&#X201D;. <EM>Skeleton code</EM> is
+	so called because it provides supporting infrastructure that is
+	required to implement server applications.
+</LI></UL><P>A CORBA product must provide an IDL compiler, but the CORBA
+specification does not state what is the <EM>name</EM> of the compiler or
+what command-line options it accepts. These details vary from one CORBA
+product to another.</P><!--TOC subsection Making a remote call-->
+<H3 CLASS="subsection"><!--SEC ANCHOR --><A NAME="htoc5">1.4</A>&#XA0;&#XA0;Making a remote call</H3><!--SEC END --><P>CORBA uses the term <EM>servant</EM> to refer to an object written in a
+programming language (for example, C++ or Java) that implements an IDL
+interface. The diagram below shows what happens when a client
+application invokes an operation on an object/servant in a server
+process.</P><P><img border="0" src="arch.gif" width="600" height="154"></P><P>The application code in the client makes a invocation upon a local proxy
+object (recall that the proxy class is generated by the IDL compiler).
+The proxy marshals information about the request&#X2014;such as the name of
+the operation being invoked, and its <TT>in</TT> and <TT>inout</TT>
+parameters&#X2014;into a binary buffer. The proxy object then passes this
+binary buffer to the ORB library (provided with the CORBA product),
+which transmits the request message across the network to the server
+process. The ORB in the client process waits to read a reply message
+from the server process. The ORB returns the reply buffer back to the
+proxy object, which unmarshals <TT>inout</TT> and <TT>out</TT> parameters
+and the return value (or a raised exception), and returns these to the
+client application code.</P><P>On the server side, a thread inside the ORB sits in an event loop,
+waiting for incoming requests. When a request arrives, the ORB reads the
+request&#X2019;s binary buffer and passes this to some code that unmarshals the
+parameters and dispatches the request to the target servant. The code
+that performs the unmarshalling and dispatching is spread over two
+components. One component is called a POA, and I will discuss that later
+in this article. The other component is the skeleton code that was
+generated by the IDL compiler. The generated skeleton code is not
+explicitly shown in the diagram because it takes the form of is a base
+class that is inherited by the servant class. When the operation in the
+servant returns, the skeleton code marshals the <TT>inout</TT> and
+<TT>out</TT> parameters (or a raised exception) into a binary buffer and
+this is returned via the POA to the server-side ORB, which transmits the
+reply message across the network to the client process.</P><!--TOC subsection CORBA Services-->
+<H3 CLASS="subsection"><!--SEC ANCHOR --><A NAME="htoc6">1.5</A>&#XA0;&#XA0;CORBA Services</H3><!--SEC END --><P>Many programming languages are equipped with a standardized library of
+functions and/or classes that complement the core language. These
+standardized libraries usually provide collection data-types (for
+example, linked lists, sets, hash tables and so on), file input-output
+and other functionality that is useful for the development of a wide
+variety of applications. If you asked a developer to write an
+application in, say, Java, C or C++ but <EM>without</EM> making use of
+that language&#X2019;s standard library then the developer would find it very
+difficult.</P><P>A similar situation exists for CORBA. The core part of CORBA (an
+object-oriented RPC mechanism built with IDL and common on-the-wire
+protocols) is of limited use by itself&#X2014;in the same way that a
+programming language stripped of its standardized library is of limited
+use. What greatly enhances the power of CORBA is a standardized
+collection of services&#X2014;called <EM>CORBA Services</EM>&#X2014;that provide
+functionality useful for the development of a wide variety of
+distributed applications. The CORBA Services have APIs that are defined
+in IDL. In effect, you can think of the CORBA Services as being like a
+standardized class library. However, one point to note is that most
+CORBA Services are provided as prebuilt server applications rather than
+as libraries that are linked into your own application. Because of this,
+the CORBA Services are really a <EM>distributed</EM>, standardized class
+library.</P><P>Some of the commonly-used CORBA Services include the following.
+</P><UL CLASS="itemize"><LI CLASS="li-itemize">
+	The Naming Service and Trading Service allow a server
+	application to advertise its objects, thereby making it easy
+	for client applications to find the objects.</LI><LI CLASS="li-itemize">	Most CORBA applications use <EM>synchronous, one-to-one</EM>
+	communication. However, some applications require
+	<EM>many-to-many, asynchronous</EM> communication, or what many
+	people call <EM>publish and subscribe</EM> communication. Various
+	CORBA Services have been defined to support this type of
+	communication.</LI><LI CLASS="li-itemize">	In a distributed system, it is sometimes desirable for a
+	transaction to span <EM>several</EM> databases so that when a
+	transaction is committed, it is guaranteed that either
+	<EM>all</EM> the databases are updated or <EM>none</EM> are updated.
+	The <EM>Object Transaction Service</EM> (OTS) provides this
+	capability.
+</LI></UL><!--TOC section Developing a simple client-server application-->
+<H2 CLASS="section"><!--SEC ANCHOR --><A NAME="htoc7">2</A>&#XA0;&#XA0;Developing a simple client-server application</H2><!--SEC END --><P>I have used the <A HREF="http://www.orbacus.com">Orbacus</A> implementation of
+COBRA to develop a sample client-server application. Orbacus is
+available for both Java and C++.</P><!--TOC subsection The business logic domain-->
+<H3 CLASS="subsection"><!--SEC ANCHOR --><A NAME="htoc8">2.1</A>&#XA0;&#XA0;The business logic domain</H3><!--SEC END --><P>My demonstration server application provides <CODE>encrypt()</CODE> and
+<CODE>decrypt()</CODE> operations. The client application invokes
+<CODE>encrypt()</CODE> on an object in the server to encrypt some plain text.
+Later the client invokes <CODE>decrypt()</CODE> to decrypt the text again.</P><P>The encryption/decryption algorithm is based on the
+<A HREF="http://en.wikipedia.org/wiki/Caesar_cipher">Caesar cipher</A> which
+is one of the simplest encryption techniques. It is a substitution
+cipher in which each letter in the plain text is replaced by a letter
+that is a fixed number of positions down the alphabet. I added an XOR
+operation with an encryption key after the shift operation to obscure
+the relationship. You can see the substitution technique in the diagram below:</P><P><img border="0" src="caesar.png" width="320" height="135"><br>
+</P><!--TOC subsection Writing the IDL-->
+<H3 CLASS="subsection"><!--SEC ANCHOR --><A NAME="htoc9">2.2</A>&#XA0;&#XA0;Writing the IDL</H3><!--SEC END --><P>The first step in implementing the client-server application is to write
+an IDL file that defines the public API of the server. This consists of
+one interface that provides <CODE>encrypt()</CODE> and <CODE>decrypt()</CODE>
+operations. The interface also contains a <CODE>shutdown()</CODE> operation so
+we can gracefully ask the server to terminate.</P><P>The IDL for the demonstration application is shown below.</P><PRE CLASS="verbatim">// Crypt.idl
+interface CaesarAlgorithm {
+    typedef sequence&lt;char&gt; charsequence;
+    charsequence encrypt(in string info,in unsigned long k,in unsigned long shift);
+    string decrypt(in charsequence info,in unsigned long k,in unsigned long shift);
+    boolean shutdown();
+};
+</PRE>
+<H3 CLASS="subsection"><!--SEC ANCHOR --><A NAME="htoc10">2.3</A>&#XA0;&#XA0;Generating the skeleton and the stub</H3><!--SEC END --><P>After writing the IDL file, we convert the IDL definitions into
+corresponding C++ definitions by running the IDL compiler suplied with
+Orbacus.</P><PRE CLASS="verbatim">idl crypt.idl
+</PRE><P>Running that command generates the following files.
+</P><UL CLASS="itemize"><LI CLASS="li-itemize">
+	
+	<CODE>crypt.h</CODE> and <CODE>crypt.cpp</CODE>. These files define and
+	implement the C++ types corresponding to IDL types (such as
+	structs, unions, sequences and so on) defined in the IDL file.
+	These files also implement the client-side proxy classes
+	corresponding to IDL interfaces.</LI><LI CLASS="li-itemize">	
+	<CODE>crypt_skel.h</CODE> and <CODE>crypt_skel.cpp</CODE>. These files
+	define and implement the server-side functionality required to
+	read incoming requests and dispatch them to <EM>servants</EM> (the
+	C++ objects that represent the CORBA objects).
+</LI></UL><P>Note that the CORBA specification has not standardized the name of the
+IDL compiler, and different CORBA implementations may use different
+names. For example, the IDL compilers in Orbacus, Orbix and omniORB are
+called <CODE>idl</CODE>, while TAO calls its IDL compiler <CODE>tao_idl</CODE>, and
+both VisiBroker and Orbit call theirs <CODE>idl2cpp</CODE>.</P><!--TOC subsection Implementing the servant class-->
+<H3 CLASS="subsection"><!--SEC ANCHOR --><A NAME="htoc11">2.4</A>&#XA0;&#XA0;Implementing the servant class</H3><!--SEC END --><P>The next step is to implement the <EM>servant</EM> class, that is, a C++
+class that implements an IDL interface. To do this, we create a class
+(<CODE>CryptographicImpl</CODE>) that inherits from the skeleton class
+(<CODE>POA_CaesarAlgorithm</CODE>) generated by the IDL compiler. You can see
+this below.</P><PRE CLASS="verbatim">#include &lt;iostream&gt;
+#include &lt;string&gt;
+
+#include &quot;OB/CORBA.h&quot;
+#include &quot;crypt_skel.h&quot;
+
+class CryptographicImpl : virtual public ::POA_CaesarAlgorithm,
+				virtual public PortableServer::RefCountServantBase
+							
+{			
+	CORBA::ORB_var orb; // Reference to CORBA ORB
+
+	public:
+		CryptographicImpl(CORBA::ORB_var orb)
+		{
+			this-&gt;orb = orb;
+		}
+
+		// Caesar text encryption algorithm
+		virtual ::CaesarAlgorithm::charsequence* encrypt(const char* info,::CORBA::ULong k,::CORBA::ULong shift) 
+			throw(::CORBA::SystemException)
+		{
+			std::string msg = info;
+			int len = msg.length();
+			::CaesarAlgorithm::charsequence* outseq = new ::CaesarAlgorithm::charsequence;
+			outseq-&gt;length(len + 1);
+			std::string::iterator i = msg.begin();
+			std::string::iterator end = msg.end();
+			int j = 0;
+			while (i != end)
+			{
+				 *i+= shift;
+				 *i ^= k;
+				 (*outseq)[j++] = *i++;
+			}
+			(*outseq)[len] = '\0';
+			return outseq;
+
+		}
+			
+		
+		// Caesar text decryption algorithm
+		virtual char* decrypt(const ::CaesarAlgorithm::charsequence&amp; info,::CORBA::ULong k,::CORBA::ULong shift) 
+			throw(::CORBA::SystemException)
+		{
+			char* r = CORBA::string_alloc(info.length());
+	
+			for (int i = 0;i &lt; info.length() - 1;i++)
+			{				
+				r[i]  = info[i];
+				r[i] ^= k;
+				r[i] -= shift;
+				 
+			}
+			r[info.length() - 1] = '\0';
+			return r;
+		}	
+	
+		// Terminate CORBA message
+		virtual ::CORBA::Boolean shutdown() throw(::CORBA::SystemException)
+		{
+			orb-&gt;shutdown(false);
+			return true;
+		}
+};
+
+</PRE><P>The servant implements the operations defined in the IDL interface. When
+a client makes a remote call, the dispatch code (implemented in the
+inherited <CODE>POA_CaesarAlgorithm</CODE> class) unmarshals the parameters of
+the incoming request and invokes the operation.</P><!--TOC subsection Creating the server-->
+<H3 CLASS="subsection"><!--SEC ANCHOR --><A NAME="htoc12">2.5</A>&#XA0;&#XA0;Creating the server</H3><!--SEC END --><P>Having implemented the servant class, we must now implement the server
+mainline. This performs some CORBA initialization steps, creates the
+servant, advertises its object reference in the naming service and then
+enters an event loop to wait for incoming requests. Before showing the
+code, there are two more CORBA concepts that I need to explain:
+<EM>POA</EM> and <EM>POA Manager</EM>.</P><P>From reading this article so far, you might have the impression that a
+client invokes operations on remote objects, and those remote objects
+live in a server process. That is <EM>almost</EM> correct. In reality, the
+objects live in a container called a POA (the term stands for
+<EM>Portable Object Adapter</EM>, but the origin of the name is not
+particularly interesting), and the POAs, in turn, live in a server
+process. The motivation for this is that different POAs can provide
+different qualities of service (or <EM>policies</EM> in CORBA
+terminology). For example, one POA might be single-threaded while
+another POA might be multi-threaded. The quality of service provided by
+a POA is applied to the servants within that POA. So by putting some
+servants in one POA and other servants in another POA, a single server
+process can host objects with a variety of different qualities of
+service: some objects might be single-threaded, while others are
+multi-threaded; some objects might be <EM>transient</EM> (meaning
+temporary), while other objects might be <EM>persistent</EM> (meaning that a
+client application can continue communicating with the object even if
+the server processes crashes and is restarted). CORBA provides an API
+that enables server developers to create multiple POAs, each with a
+potentially different quality of service. The CORBA runtime system in a
+server pre-creates a &#X201C;rootPOA&#X201D; that is multi-threaded and transient.
+Since that quality of service is suitable for the needs of our
+demonstration server, we do not need to explicitly create a POA.</P><P>A water tap (or <EM>faucet</EM> as the Americans call it) is used for
+turning on and off the flow of water. A <EM>POA manager</EM> is similar to
+a water tap except that it controls the flow of incoming requests. When
+a CORBA server starts, the POA manager associated with the root POA is
+in a <EM>holding</EM> state, which means if any requests from clients
+arrive then they will be queued up. This holding state enables a server
+process to complete its initialization without having to worry about
+processing incoming requests. When the server has completed its
+initialization, it puts its POA manager(s) into the <EM>active</EM> state,
+so that incoming requests can be dispatched, via POAs, to servants.</P><PRE CLASS="verbatim">#include &lt;iostream&gt;
+#include &quot;OB/CORBA.h&quot;
+#include &lt;OB/Cosnaming.h&gt;
+#include &quot;crypt.h&quot;
+#include &quot;cryptimpl.h&quot;
+
+using namespace std;
+
+int main(int argc, char** argv)
+{
+	// Declare ORB and servant object
+	CORBA::ORB_var orb;
+	CryptographicImpl* CrypImpl = NULL;
+
+	try {
+		// Initialize the ORB.
+1		orb = CORBA::ORB_init(argc, argv);
+		// Get a reference to the root POA
+2		CORBA::Object_var rootPOAObj = orb-&gt;resolve_initial_references(&quot;RootPOA&quot;);
+		// Narrow it to the correct type
+		PortableServer::POA_var rootPOA = PortableServer::POA::_narrow(rootPOAObj.in());
+		
+		// Create POA policies
+		CORBA::PolicyList policies;
+		policies.length(1);
+		
+		policies[0] = 
+			rootPOA-&gt;create_thread_policy(PortableServer::SINGLE_THREAD_MODEL);
+		
+		// Get the POA manager object
+		PortableServer::POAManager_var manager = rootPOA-&gt;the_POAManager();
+		
+3		// Create a new POA with specified policies
+		PortableServer::POA_var myPOA = rootPOA-&gt;create_POA(&quot;myPOA&quot;, manager, policies);
+
+		// Free policies
+		CORBA::ULong len = policies.length();
+		for (CORBA::ULong i = 0; i &lt; len; i++) 
+			policies[i]-&gt;destroy();
+
+		// Get a reference to the Naming Service root_context
+4		CORBA::Object_var rootContextObj = orb-&gt;resolve_initial_references(&quot;NameService&quot;);
+		// Narrow to the correct type
+		CosNaming::NamingContext_var nc =
+			CosNaming::NamingContext::_narrow(rootContextObj.in());
+
+		// Create a reference to the servant
+5		CrypImpl = new CryptographicImpl(orb);	
+		// Activate object
+		PortableServer::ObjectId_var myObjID = myPOA-&gt;activate_object(CrypImpl);
+		// Get a CORBA reference with the POA through the servant
+6		CORBA::Object_var o = myPOA-&gt;servant_to_reference(CrypImpl);
+		// The reference is converted to a character string
+		CORBA::String_var s = orb-&gt;object_to_string(o);
+7		cout &lt;&lt; &quot;The IOR of the object is: &quot; &lt;&lt; s.in() &lt;&lt; endl;
+
+		CosNaming::Name name;
+		name.length(1);
+		name[0].id = (const char *) &quot;CryptographicService&quot;;
+		name[0].kind = (const char *) &quot;&quot;;
+		// Bind the object into the name service
+8		nc-&gt;rebind(name,o);
+	  
+		// Activate the POA
+		manager-&gt;activate();
+		cout &lt;&lt; &quot;The server is ready. Awaiting for incoming requests...&quot; &lt;&lt; endl;
+		// Start the ORB
+9		orb-&gt;run();
+        	
+	} catch(const CORBA::Exception&amp; e) {
+		// Handles CORBA exceptions
+		cerr &lt;&lt; e &lt;&lt; endl;
+  }
+  
+  // Decrement reference count
+  if (CrypImpl)
+10		CrypImpl-&gt;_remove_ref();
+
+  // End CORBA
+  if (!CORBA::is_nil(orb)){
+	  try{
+11		orb-&gt;destroy(); 
+		cout &lt;&lt; &quot;Ending CORBA...&quot; &lt;&lt; endl;
+	  } catch (const CORBA::Exception&amp; e)
+	  {
+		  cout &lt;&lt; &quot;orb-&gt;destroy() failed:&quot; &lt;&lt; e &lt;&lt; endl;
+		  return 1;		
+	  }
+  }
+  return 0;
+}
+
+</PRE><OL CLASS="enumerate" type=1><LI CLASS="li-enumerate">
+	
+	Initializes the ORB.</LI><LI CLASS="li-enumerate">	
+	Get the root POA. Later on, we will create a servant object and
+	<EM>activate</EM> (that is, insert) it into this POA.</LI><LI CLASS="li-enumerate">	
+	Access the root POA&#X2019;s POA manager. Initially this POA manager is
+	in the <EM>holding</EM> state, so any incoming requests are queued
+	up. When the server&#X2019;s initialization is complete, we will put
+	this POA manager into the <EM>active</EM> state so that incoming
+	requests can be dispatched.</LI><LI CLASS="li-enumerate">	
+	Obtain a reference for the naming service so that after
+	we create a servant we can export its object reference to the
+	naming service.</LI><LI CLASS="li-enumerate">	
+	A <CODE>CryptographicImpl</CODE> servant object is dynamically created.</LI><LI CLASS="li-enumerate">	
+	Calling <CODE>servant_to_reference()</CODE> provides us with a object
+	reference for the servant.</LI><LI CLASS="li-enumerate">	
+	The reference is converted to a character string in order to
+	display it.</LI><LI CLASS="li-enumerate">	
+	The <CODE>rebind()</CODE> operation is used to register the servant&#X2019;s
+	object reference in the naming service.</LI><LI CLASS="li-enumerate">	
+	The ORB enters an event loop, so it can await incoming requests.</LI><LI CLASS="li-enumerate">	
+	Servants are reference counted. When a servant is created, its
+	reference count is initialized to&#XA0;1. Now that we are finished
+	with the servant, we decrement its reference count so the CORBA
+	runtime system knows it can be deleted safely.</LI><LI CLASS="li-enumerate">	
+	Destroy the ORB.
+</LI></OL><!--TOC subsection Implementing the client-->
+<H3 CLASS="subsection"><!--SEC ANCHOR --><A NAME="htoc13">2.6</A>&#XA0;&#XA0;Implementing the client</H3><!--SEC END --><P>The client application performs some CORBA initialization steps,
+retrieves the server&#X2019;s object reference from the naming service and then
+goes into a loop, invoking <CODE>encrypt()</CODE> and <CODE>decrypt()</CODE> on it.
+When the client is finished, it invokes <CODE>shutdown()</CODE> to ask the
+server to terminate.</P><PRE CLASS="verbatim">#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &quot;OB/CORBA.h&quot;
+#include &quot;OB/Cosnaming.h&quot;
+#include &quot;crypt.h&quot;
+
+
+using namespace std;
+
+int main(int argc, char** argv)
+{
+
+	// Declare ORB
+	CORBA::ORB_var orb;
+	
+	try {	
+		
+		// Initialize the ORB
+1		orb = CORBA::ORB_init(argc, argv);
+		
+		// Get a reference to the Naming Service
+2		CORBA::Object_var rootContextObj = orb-&gt;resolve_initial_references(&quot;NameService&quot;);
+		CosNaming::NamingContext_var nc = 
+				CosNaming::NamingContext::_narrow(rootContextObj.in());
+	       
+		CosNaming::Name name;
+		name.length(1);
+		name[0].id = (const char *) &quot;CryptographicService&quot;;
+		name[0].kind = (const char *) &quot;&quot;;
+		// Invoke the root context to retrieve the object reference
+3		CORBA::Object_var managerObj = nc-&gt;resolve(name);
+		// Narrow the previous object to obtain the correct type
+		::CaesarAlgorithm_var manager = 
+4			::CaesarAlgorithm::_narrow(managerObj.in());
+
+		string info_in,exit,dummy; 
+		CORBA::String_var info_out;
+		::CaesarAlgorithm::charsequence_var inseq;
+		unsigned long key,shift;
+		
+		try{
+
+			do{
+				cout &lt;&lt; &quot;\nCryptographic service client&quot; &lt;&lt; endl;
+				cout &lt;&lt; &quot;----------------------------&quot; &lt;&lt; endl;
+		
+				do{ // Get the cryptographic key
+					if (cin.fail())
+					{
+						cin.clear();
+						cin &gt;&gt; dummy;
+					}
+					cout &lt;&lt; &quot;Enter encryption key: &quot;;	
+					cin &gt;&gt; key;
+
+				} while (cin.fail());
+				
+				do{ // Get the shift
+					if (cin.fail())
+					{
+						cin.clear();
+						cin &gt;&gt; dummy;
+					}
+					cout &lt;&lt; &quot;Enter a shift: &quot;;	
+					cin &gt;&gt; shift;
+
+				} while (cin.fail());
+				
+				// Used for debug pourposes
+				//key = 9876453;
+				//shift = 938372;
+				getline(cin,dummy); // Get the text to encrypt
+				cout &lt;&lt; &quot;Enter a plain text to encrypt: &quot;;
+				getline(cin,info_in);
+		
+				// Invoke first remote method
+5				inseq = manager-&gt;encrypt(info_in.c_str(),key,shift);
+				cout &lt;&lt; &quot;----------------------------------------------&quot; &lt;&lt; endl;
+				cout &lt;&lt; &quot;Encrypted text is: &quot; &lt;&lt; inseq-&gt;get_buffer() &lt;&lt; endl;
+				// Invoke second remote method
+6				info_out = manager-&gt;decrypt(inseq.in(),key,shift);
+				cout &lt;&lt; &quot;Decrypted text is: &quot; &lt;&lt; info_out.in() &lt;&lt; endl;
+				cout &lt;&lt; &quot;----------------------------------------------&quot; &lt;&lt; endl;
+				cout &lt;&lt; &quot;Exit? (y/n): &quot;; 
+				cin &gt;&gt; exit;
+			} while (exit!=&quot;y&quot;);
+
+			// Shutdown server message
+7			manager-&gt;shutdown();
+
+		} catch(const std::exception&amp; std_e){
+			cerr &lt;&lt; std_e.what() &lt;&lt; endl;
+		  }
+	}catch(const CORBA::Exception&amp; e) {
+		// Handles CORBA exceptions
+		cerr &lt;&lt; e &lt;&lt; endl;
+   }
+   // End CORBA
+	if (!CORBA::is_nil(orb)){
+		try{		
+			orb-&gt;destroy(); 
+			cout &lt;&lt; &quot;Ending CORBA...&quot; &lt;&lt; endl;
+		} catch(const CORBA::Exception&amp; e)
+		{
+			cout &lt;&lt; &quot;orb-&gt;destroy failed:&quot; &lt;&lt; e &lt;&lt; endl;
+			return 1;
+		}
+   }
+   return 0;
+}
+</PRE><OL CLASS="enumerate" type=1><LI CLASS="li-enumerate">	
+	Initialize the ORB.</LI><LI CLASS="li-enumerate">	
+	Obtain a reference for the naming service.</LI><LI CLASS="li-enumerate">	
+	Call <CODE>resolve()</CODE> (which means <EM>lookup</EM>) on the naming
+	service to retrieve the server&#X2019;s object reference.</LI><LI CLASS="li-enumerate">	
+	The <CODE>narrow()</CODE> operation is, in essence, a typecast. We
+	have to <CODE>narrow()</CODE> the object reference received from the
+	naming service into the correct subtype so we can invoke
+	operations on it.</LI><LI CLASS="li-enumerate">	
+	Make a remote invocation of the <CODE>encrypt()</CODE> operation.</LI><LI CLASS="li-enumerate">	
+	Make a remote invocation of the <CODE>decrypt()</CODE> operation.</LI><LI CLASS="li-enumerate">	
+	Make a remote invocation of the <CODE>shutdown()</CODE> operation.
+</LI></OL><!--TOC subsection Running the client-server application-->
+<H3 CLASS="subsection"><!--SEC ANCHOR --><A NAME="htoc14">2.7</A>&#XA0;&#XA0;Running the client-server application</H3><!--SEC END --><P>Once we have implemented the client and the server it&#X2019;s time to connect
+them. Because our demonstration client and server exchange object
+references via the naming service, we must ensure that the naming service
+(which is called <CODE>nameserv</CODE> in Orbacus) is running. We use some
+command-line options to tell the naming service the host and port on
+which it should listen.</P><PRE CLASS="verbatim">nameserv -OAhost localhost -OAport 8140
+</PRE><P>After this, we can start the server with a command-line option to tell
+it how to contact the naming service.</P><PRE CLASS="verbatim">server -ORBInitRef NameService=corbaloc:iiop:localhost:8140/NameService</PRE><PRE CLASS="verbatim">
+<img border="0" src="server.gif" width="600" height="157">
+</PRE><P>Finally we can start the client, again with a command-line option to
+tell it how to contact the naming service.</P><PRE CLASS="verbatim">client -ORBInitRef NameService=corbaloc:iiop:localhost:8140/NameService
+</PRE><PRE CLASS="verbatim"><img border="0" src="client.gif" width="600" height="297">
+</PRE><!--TOC section CORBA advantages and disadvantages-->
+<H2 CLASS="section"><!--SEC ANCHOR --><A NAME="htoc15">3</A>&#XA0;&#XA0;CORBA
+benefits and drawbacks&nbsp;</H2><!--SEC END --><P>CORBA offers several benefits.</P><P>First, implementations of CORBA are available for many programming
+languages (such as C, C++, Java, COBOL, Ada, SmallTalk and Python, Tcl
+and Perl) and many operating systems (including Windows, UNIX,
+mainframes and embedded devices). Not all client-server technologies can
+claim this. For example, Microsoft technologies (COM, DCOM and .NET)
+have traditionally been available only on Windows. Java RMI works across
+multiple operating systems, but it can be used only in Java-based
+applications.</P><P>Second, when making a remote call, CORBA marshals parameters into a
+compact binary format for transmission across the network. This compact
+format saves on network bandwidth. In addition, the CPU overhead
+required to marshal parameters into the binary format is also quite low.
+In contrast, some newer client-server technologies, such as SOAP,
+marshal parameters into XML format when making remote calls. XML is very
+verbose so it uses a lot of bandwidth; usually at least ten times more
+bandwidth than an equivalent CORBA call. In addition, when a SOAP-based
+server receives a request, it must parse the XML to extract the
+parameter data. Doing this requires a lot of CPU time. In contrast,
+parameters can be marshaled in and out of CORBA&#X2019;s binary message format
+much more quickly.</P><P>Third, CORBA has been around for well over a decade, which means that
+its technology is quite stable and feature rich.</P><P>Of course, CORBA is not perfect. Its main drawback is that the power and
+flexibility of CORBA comes with a relatively steep learning curve. An
+open-source library called the
+<A HREF="http://www.ciaranmchale.com/download/corbautil-2.1.7.zip">CORBA
+Utilities</A> eases <EM>some</EM>, but not all, of the learning curve for C++
+and Java developers.</P><!--TOC section Further reading-->
+<H2 CLASS="section"><!--SEC ANCHOR --><A NAME="htoc16">4</A>&#XA0;&#XA0;Further reading</H2><!--SEC END --><P>You can find a good overview of CORBA concepts in
+<A HREF="http://www.ciaranmchale.com/download/corba-explained-simply.pdf"><EM>CORBA
+Explained Simply</EM></A>.</P><P>For details of writing CORBA applications in C++, read <EM>Advanced
+CORBA programming with C++</EM> by Michi Henning and Steve Vinoski.</P><P>About
+theory and fundamentals:</P><P><i>Distributed Systems: Concepts and Design</i>
+by George Coulouris, Jean Dollimore and Tim Kindberg.&nbsp;<br>
+<br>
+Books and notes from the National University for Distance Education - UNED -
+Spain.</P><!--TOC section Acknowledgements-->
+<H2 CLASS="section"><!--SEC ANCHOR --><A NAME="htoc17">5</A>&#XA0;&#XA0;Acknowledgements</H2><!--SEC END --><P>I would like to thank Ciaran McHale in Progress Software for his
+feedback on a draft of this article.</P></BODY>
+</HTML>

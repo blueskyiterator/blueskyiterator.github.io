@@ -1,0 +1,1176 @@
+<!--------------------------------------------------------------------------->  
+<!--                           INTRODUCTION                                
+
+ The Code Project article submission template (HTML version)
+
+Using this template will help us post your article sooner. To use, just 
+follow the 3 easy steps below:
+ 
+     1. Fill in the article description details
+     2. Add links to your images and downloads
+     3. Include the main article text
+
+That's all there is to it! All formatting will be done by our submission
+scripts and style sheets. 
+
+-->  
+<!--------------------------------------------------------------------------->  
+<!--                        IGNORE THIS SECTION                            -->
+<html>
+<head>
+<title>The Code Project</title>
+<Style>
+BODY, P, TD { font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 10pt }
+H2,H3,H4,H5 { color: #ff9900; font-weight: bold; }
+H2 { font-size: 13pt; }
+H3 { font-size: 12pt; }
+H4 { font-size: 10pt; color: black; }
+PRE { BACKGROUND-COLOR: #FBEDBB; FONT-FAMILY: "Courier New", Courier, mono; WHITE-SPACE: pre; }
+CODE { COLOR: #990000; FONT-FAMILY: "Courier New", Courier, mono; }
+</style>
+<link rel="stylesheet" type=text/css href="http://www.codeproject.com/styles/global.css">
+</head>
+<body bgcolor="#FFFFFF" color=#000000>
+<!--------------------------------------------------------------------------->  
+
+
+<!-------------------------------     STEP 1      --------------------------->
+<!--  Fill in the details (CodeProject will reformat this section for you) -->
+
+<pre>
+Title:       Audio playback processing with DirectMusic
+Author:      Carlos Jiménez de Parga 
+Email:       cjimenez@isometrica.net
+Environment: VC++ 6.0-7.0, Win 98, 2000, XP
+Keywords:    Win32, MFC, DirectX 
+Level:       Intermediate&quot;
+Description: An extension of the DirectMidi class library for audio handling
+Section      Audio
+SubSection   DirectMusic
+</pre>
+
+<!-------------------------------     STEP 2      --------------------------->
+<!--  Include download and sample image information.                       --> 
+
+<ul class=download>
+<li><a href="http://directmidi.sourceforge.net/virtual.htm">Download executable demo
+  project (OpenGL, basic 3D GFX card and DirectX 8.0 or above required)&nbsp;</a></li>
+</ul>
+
+<p><img border="0" src="island1.jpg" width="470" height="365"></p>
+
+
+<!-------------------------------     STEP 3      --------------------------->
+<!--  Add the article text. Please use simple formatting (<h2>, <p> etc)   --> 
+
+<h1>Audio playback processing with DirectMusic</h1> 
+
+<h2><a name="0"></a>0. Index</h2>
+
+<p><a href="#0">0. Index</a><br>
+<a href="#1">1. Introduction</a><br>
+<a href="#2">2. Audio playback DirectMusic architecture</a><br>
+&nbsp;&nbsp;&nbsp; <a href="#2.1">2.1 Basic concepts</a><br>
+&nbsp;&nbsp;&nbsp; <a href="#2.2">2.2 Main COM interfaces in DirectMusic for
+audio playback</a><br>
+<a href="#3">3. Developping audio applications using DirectMIDI</a><br>
+&nbsp;&nbsp;&nbsp; <a href="#3.1">3.1 Introduction - DirectMIDI audio processing
+layout</a><br>
+&nbsp;&nbsp;&nbsp; <a href="#3.2">3.2 Creating the application</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#3.2.1">3.2.1 Setting up the development
+environment</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#3.2.2">3.2.2 The main objects</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#3.2.3">3.2.3 Starting up the performance</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#3.2.4"> 3.2.4 Loading and playing segments</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#3.2.5">3.2.5 3D Segment positioning</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#3.2.6">3.2.6 MIDI functions with
+performances</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="#3.2.6.1">
+3.2.6.1 Sending a note-on in the 3D space</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="#3.2.6.2">3.2.6.2 Loading and playing a DLS instrument in 3D</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="#3.2.6.3">3.2.6.3 Wave sample instruments and thruing to the 3D performance</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#3.2.7">3.2.7 Advanced audio features</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#3.2.8">3.2.8 Exception handling</a><br>
+<a href="#4">
+4. More information</a><br>
+<a href="#5">
+5. The demo application</a><br>
+<a href="#6">
+6. History</a><h2><a name="1"></a>1. Introduction</h2>
+
+<p>This article focuses on the last part of the DirectMidi wrapper class library
+which allows performing advanced playback and mixing audio functions with the
+DirectMusic - DirectX API. In the first part, we saw how DirectMusic handles basic MIDI I/O operations
+such as input and output ports, thruing from one port to
+another and downloading DLS instruments. In this part I will give a basic
+understanding on the use of DirectMusic through the DirectMidi class library to get
+full performance when synchronizing several audio wave files at the same time,
+positioning the MIDI and wave sequences in the space, sending MIDI messages to
+the performances and using DLS instruments with them.&nbsp;</p>
+
+<h2><a name="2"></a>2. Audio playback DirectMusic architecture</h2>
+<h3><a name="2.1"></a>2.1 Basic concepts</h3>
+<p>The main problem of a basic system MIDI port like the MIDI Mapper is the limitation
+of the number of audio channels to 16. This limitation comes from the MIDI
+standard and extends to modern applications. This limitation is overcome in
+DirectMusic thanks to the appearance of <b>Peformance channels</b>. The
+performance channels are similar to MIDI channels&nbsp;except that they are virtually unlimited. Each performance channel contains a single
+instrument, an instrument coming from a MIDI sequence, a DLS
+instrument or a waveform. These parts have their own pan, volume and
+transposition settings. At this point we can state that one performance
+channel belongs to a single MIDI channel and to a channel group from the port.
+From now on, when
+working with performance objects we will always use zero-based performance
+channels. The chart below explains this relation:<p align="center"><img border="0" src="PChannels.gif" width="273" height="400"><p><br>
+Performance channels are handled by <b>Performance</b> objects which are the
+responsible of sending audio data from the source to the synthesizer.
+Performance objects also handle timing, the routing of messages, tool
+management and notifications.&nbsp;<br>
+<br>
+Another important object related to performance and performance channels are <b>Audiopaths</b>.
+An audiopath can be seen as a chain of objects through which data is streamed.
+An application can gain access to any of these objects. For example, you might
+retrieve a buffer object to set 3D properties of a sound source, or a DMO effect
+to change the parameters of the effect.<br>
+<br>
+The last important objects involved in DirectMusic application are <b>Segments</b>.
+Segments are objects encapsulating sequenced sound data. The data might be a
+MIDI sequence, a waveform, a collection of information originating in a segment
+file from DirectMusic Producer, or a piece of music composed at run time from
+different components.&nbsp;<br>
+A segment can be played as a primary or secondary segment. When playing as a
+primary segment only this segment can be played at a time. The secondary
+segments are typically short musical sound effects played at a time or
+synchornized over the primary segment.<h3><a name="2.2"></a>2.2 Main COM
+interfaces in DirectMusic for audio playback</h3>
+<p>DirectMusic is part of DirectX technology which uses distributed object
+programming through COM. COM is the fundamental &quot;object model&quot; on
+which ActiveX Controls and OLE are built. COM allows an object to expose its
+functionality to other components and to host applications. It defines both how
+the object exposes itself and how this exposure works across processes and
+across networks. COM also defines the object's life cycle.<br>
+Although DirectMusic uses this technology, don't feel overwhelmed, since the class library automatically
+handles these situations.<br>
+<br>
+In the following
+lines the most important interfaces involved in a DirectMusic audio application
+are presented:
+<ul class="interface">
+  <li><p><b>IDirectMusic8: </b>The IDirectMusic8 interface is the main object in
+    a DirectMusic application. There should only be one instance of this
+    interface per application. Performances need this object to get initialized.<br>
+    <br>
+  </li>
+  <li><p><b>IDirectMusicPerformance8: </b>This interface is the responsible for
+    managing the playback. It is used for adding and removing ports, mapping <nobr>performance
+    channels</nobr> to ports, playing segments, dispatching messages and routing
+    them through tools, requesting and receiving event notification, and setting
+    and retrieving various parameters. It also has several methods for getting
+    information about timing and for converting time and <nobr>music values</nobr>
+    from one system to another.<br>
+    <br>
+  </li>
+  <li><p><b>IDirectMusicSegment8:</b> It represents a segment, which is a
+    playable unit of data made up of multiple tracks.&nbsp;<br>
+    <br>
+  </li>
+  <li><p><b>IDirectMusicAudioPath8: </b>This<b> </b>interface manages the stages
+    of the data flow from the performance to the final mixer. It also provides
+    references to DMO objects and DirectSound buffers like the <code>IDirectSound3DBuffer8</code>.<br>
+    <br>
+  </li>
+  <li><p><b>IDirectSound3DBuffer8: </b>It is used to retrieve and set parameters
+    that describe the position, orientation, and environment of a sound buffer
+    in 3D space.<br>
+    <br>
+  </li>
+  <li><p><b>IDirectSound3DListener8: </b>It is used to retrieve and set
+    parameters that describe a listener's position, orientation, and listening
+    environment in 3D space.<br>
+  </li>
+</ul>
+<h2><a name="3"></a>3. Developping audio applications using DirectMIDI</h2>
+<h3><a name="3.1"></a>3.1 Introduction - DirectMIDI audio processing layout</h3>
+
+<p align="left">As it happens with the MIDI part of the DirectMidi, the main
+kernel of the library for audio handling is based on its eleven related classes.
+They are commented hereafter:&nbsp;</p>
+
+<p align="center"><br>
+<img border="0" src="Diagram.gif" width="600" height="375"></p>
+
+<p align="left">On the left side of the chart we can see the main objects of a
+DirectMusic application. The <b>CDirectMusic </b>class is the responsible of
+instancing the DirectMusic COM object for a Win32 application. It initializes
+DirectMusic and creates or specifies the DirectSound object required for the
+software synthesizer.&nbsp;<br>
+ The second elementary object is <b>CMasterClock</b> which
+performs the enumeration and selection of the desired hardware clock as
+reference clock. The CMasterClock is not used unless the user needs a specific timing configuration.&nbsp;<br>
+After creating the
+CDirectMusic object we can proceed to initialize the most two important objects
+involved in a DirectMusic audio playback application. These objects are the <b>CPortPerformance</b>
+and <b>CAPathPerformance</b> which are the encapsulation and operational
+abstraction of the <code>IDirectMusicPerformance8</code> interface. The
+CPortPerformance manages performances which use system ports like the MPU-401 or
+the software synthesizer which need to be added to this object. These
+CPortPerformance objects don't allow neither audiopaths nor 3D
+positioning.&nbsp;<br>
+On the other hand we have the <b> CAPathPerformance</b> that allows managing a
+performance which uses the default software synthesizer port. These
+CAudioPathPerformances allow audiopaths and 3D positioning, besides the use of
+DMO's and effects like Reverb and Chorus. In order to attain 3D effects over the
+audio data stream and get DMO's we will need the <b>CAudioPath</b> object which
+can be retrived by using the CAPathPerformance methods.&nbsp;<br>
+ Two important objects
+required for 3D positioning are the <b>C3DBuffer </b>and <b>C3DListener</b>
+which are the abstraction of the <code>IDirectSound3DBuffer8 </code>and<code>
+ IDirectSound3DListener</code><code>8 </code>respectively and can be initialized
+from the CAudioPath object.<br>
+Finally, we have two objects required to keep a reference to an audio
+sequence represented by the <code>IDirectMusicSegment8. </code>These objects are
+the <b>CSegment </b>and <b>C3DSegment</b>. There is a subtle difference between
+these two objects. The CSegment object is a basic unit of an audio file. This
+CSegment is intended to be played in both types of performances. The
+C3DSegment object, on the other hand, is a higher abstraction or
+encapsulation of the objects required by a sequence intended to be used with 3D
+features. Therefore, this C3DObject contains a CAudioPath and inherits from a
+C3DBuffer and a C3DListener
+internally.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+
+<h3 align="left"><a name="3.2"></a>  3.2 Creating the application</h3>
+
+<h4 align="left"><a name="3.2.1"></a> 3.2.1 Setting up the development
+environment</h4>
+
+<p align="left">The DirectMidi wrapper can be used in any kind of Win32
+applications provided by the Visual Studio wizard. In the source code explained
+in the example below I will use a &quot;Simple application&quot; of a Win32
+console. Once we have created the basic files for this application we can
+proceed to include the headers (.h) and source files (.cpp) required by the
+DirectMusic application. Thus, for example, if we start an application which
+uses the Audio part of the DirectMidi library, we will need to include the
+followings headers:<b> CDirectMidi.h, CDirectBase.h and CAudioPart.h</b>.<br>
+So as for<b> </b>a<b> </b>MIDI application as for an Audio one, we will always
+need to include the first two headers. Then, depending on the classes we need,
+we will have to include the respective .cpp file for the implementation of that
+class. For example, if we use the COutputPort class, we will need to include the
+CMidiPort.cpp and COutputPort.cpp source files. For instance, if we use the CAPathPerformance,
+we will need the CPerformance.cpp and CAPathPerformance.cpp classes.<br>
+Besides the DirectMidi classes, we will also need to include the existing files
+inside the <b>Dsutil</b> directory of the DirectMidi folder, since they contain
+DirectX basic source code utilities for wave file handling.<br>
+After including all the required files, it's important to compile the whole
+project without precompiled headers (.pch) because the DirectMidi project
+doesn't support precompiled headers by default. Therefore, go to your Visual Studio 6
+and select <b>Project -&gt; Settings </b>and expand the left
+tree view to see your project files. Then, select the <b>C/C++ tab option</b>, click on the <b>Precompiled
+headers</b>  in the combo and mark <b>&quot;Not using precompilder headers&quot; </b>for
+all the files included in the project. If you use Visual Studio 7, the procedure
+is similar: Click on the <b>Solution explorer </b>tab, select all the listed .cpp
+files and then right click. On properties, select <b>C/C++,</b> <b>Precompiled
+headers</b> and specify &quot;<b>Not Using Precompiled Headers&quot;.&nbsp;</b><b>
+</b>Finally, remove all the references to the
+&quot;stdafx.h&quot; header in the project sources.<br>
+In order to avoid unresolved external symbols after linking the DirectX functions, we will need to include a path to the DirectX libraries and headers.
+To
+do this, go to <b>Tools </b>in the menu bar, select <b>Options</b> and then
+click on the <b>Directories</b> tab to<b> </b>add the path to the DirectX8/9
+headers and library files. If you have the Visual Studio 7 (.NET),&nbsp;go to <b>Tools</b>
+in the menu bar, click on <b>Options</b> and then open the <b>Projects</b>
+folder. Expand the <b>Show Directories for</b> combo list and select the <b>library</b>
+and <b>include files </b>option. Finally, add the header and library files
+directories to their respective lists.&nbsp;</p>
+
+<h4 align="left"><a name="3.2.2"></a> 3.2.2 The main objects</h4>
+
+<p align="left">In this section it is explained how to declare and initialize the
+fundamental objects involved in a DirectMidi audio playback application. In the
+source code below you can see the list of instantiated DirectMidi objects:</p>
+
+<pre>// Main headers
+
+// ANSI I/0 headers
+#include &lt;conio.h&gt;
+#include &lt;iostream&gt;
+#include &lt;math.h&gt;
+// The class wrapper
+#include &quot;.\\DirectMidi\\CDirectMidi.h&quot;
+
+// Inline library inclusion
+
+#pragma comment (lib,&quot;dxguid.lib&quot;) // guid definitions 
+#pragma comment (lib,&quot;winmm.lib&quot;)
+#pragma comment (lib,&quot;dsound.lib&quot;)
+#pragma comment (lib,&quot;dxerr9.lib&quot;)
+
+using namespace std;
+using namespace directmidi;
+
+int main(int argc, char* argv[])
+{
+	
+	CDirectMusic	CDMusic;
+	CDLSLoader	CLoader;
+	COutputPort	COutPort,COutPort2;
+	CInputPort	CInPort;
+	CPortPerformance	CPortPerformance;
+	CAPathPerformance 	CAPathPerformance;
+	CCollection       	CCollectionA;
+	CInstrument       	CInstrument1;
+	CAudioPath       	CAudioPath1;
+	CSegment		CSegment1;
+	C3DSegment       	C3DSegment1;
+	C3DBuffer		C3DBuffer1;</pre>
+
+<p>In the first lines of the code we include the ANSI and DirectMidi
+headers required for the application. After this, we proceed to specify the libraries
+that will be linked within the application using the <b>#pragma </b>precompiler<b>
+</b>directive. It's very important to know that the DirectMidi library is
+wrapped into the directmidi namespace. Therefore, you must call <b>using
+namespace directmidi</b> in order to tell the compiler that we are referencing this logic grouping.<br>
+The first of these objects is the <code>CDirectMusic </code>which is the
+responsible to initialize the DirectMusic application and will be the last one
+to be released. The second main object is the <code>CDLSLoader</code> that&nbsp;manages
+the loading of audio sequences and DLS files. The next two important objects are
+<code>COutPort</code> which is the <code>COutputPort</code> object type that will be added to the
+<code>CPortPerformance</code>  object and <code>COutPort2</code> that will keep a reference to the internal
+output port of the <code>CAPathPerformance</code> object.<br>
+Together with these two output ports we have one of <code>CInputPort</code> type in order
+to handle thruing from the default MPU-401 port to the performance synthesizer and
+will be explained at the end of this article. Then we have
+the two performance objects used along the application whose differences were
+explained previously.&nbsp;<br>
+This example code will make use of DLS instruments, so we will need a
+container for the instrument collection extracted from the DLS file and an
+instance to a <code>CInstrument</code> object in order to download them to the performance.
+In addition we will need a <code>CAudioPath</code> object to apply effects over the
+data stream and a <code>CSegment</code> and a <code>C3DSegment</code> to play
+stereo plus reverb and
+3D positioning MIDI files respectively. Finally, we will attain 3D audio positioning
+by using a <codeC3DBuffer</code><code>C3DBuffer</code> object in conjunction
+with the <code>CAudioPathPerformance</code>.<br>
+Note that the instantiation order must be from parents to children objects, so
+that the later destruction of the objects follows a LIFO criterion, thus
+avoiding that a parent object is destructed before its children.</p>
+
+<h4><a name="3.2.3"></a>  3.2.3 Starting up the performance&nbsp;</h4>
+
+<p>As we have seen previously, all the required objects for a DirectMusic
+application were already instantiated. What is left now is calling their methods in a proper order to start music output.
+Take a look at the following lines:&nbsp;</p>
+
+<pre>try
+{
+	/////////////////////////////// INITIALIZATION //////////////////////////
+
+	// Initializes DirectMusic
+
+	CDMusic.Initialize();
+		
+	// Initializes an audiopath performance
+
+	CAPathPerformance.Initialize(CDMusic,NULL,NULL,DMUS_APATH_DYNAMIC_3D,128);
+		
+	// Initializes a port performance object
+
+	CPortPerformance.Initialize(CDMusic,NULL,NULL);
+		
+	// Initializes loader object
+
+	CLoader.Initialize();
+		
+	// Initializes output port
+
+	COutPort.Initialize(CDMusic);
+		
+	// Selects the first software synthesizer port
+
+	INFOPORT PortInfo;
+	DWORD dwPortCount = 0;
+			
+
+	do
+		COutPort.GetPortInfo(++dwPortCount,&amp;PortInfo);
+	while (!(PortInfo.dwFlags &amp; DMUS_PC_SOFTWARESYNTH));
+
+		
+	cout &lt;&lt; &quot;Selected output port: &quot; &lt;&lt; PortInfo.szPortDescription &lt;&lt; endl; 
+	
+	COutPort.SetPortParams(0,0,0,SET_REVERB | SET_CHORUS,44100);
+	
+	COutPort.ActivatePort(&amp;PortInfo);
+		
+	////////////////////////////////// PLAYING A SEGMENT ////////////////////////////
+
+	// Adds the selected port to the performance
+
+	CPortPerformance.AddPort(COutPort,0,1);
+		
+</pre>
+
+<p>After initializing DirectMusic, it proceeds to initialize the audiopath performance.
+To do this, it calls the <code>CAPathPerformance::Initialize</code>
+method&nbsp;with a reference to the created DirectMusic object, two NULL
+pointers representing the DirectSound object to be created and the HWND window
+handle for the creation of DirectSound. After these three first parameters are established, we can now specify what kind of default Audiopath we
+want in our application. In this
+case we choose a DMUS_APATH_DYNAMIC_3D type which is the one suitable for a 3D audio
+application.<br>
+In the previous line, the CPortPerformance object is initialized calling the <code>CPortPerformance::Initialize</code>&nbsp;method, passing a
+reference to the main DirectMusic object&nbsp;and two pointers representing the
+DirectSound and the HWND handler parameters. As it can be seen in the code above, we
+select and start a software synthesizer port, handled by the <code>COutputPort</code>
+object type named <code>COutPort</code>. After starting it, we call the
+<code>CPortPerformance::AddPort</code> method to add the port to the performance
+and assign it a block of 16 performance channels (0 represents channels 0-15,
+first parameter) and map it to a channel group (second parameter).&nbsp;</p>
+
+<h4><a name="3.2.4"></a>  3.2.4 Loading and playing segments</h4>
+
+<p>
+
+
+<!-------------------------------    That's it!   --------------------------->In
+the code below it is explained how to load a MIDI file sequence and play it with
+the two types of performances objects.
+
+<pre>	// Loads a MIDI file into the segment
+
+	CLoader.LoadSegment(_T(&quot;.\\media\\laststar.mid&quot;),CSegment1,TRUE);
+		
+	// Repeats the segment ad infinitum
+
+	CSegment1.SetRepeats(DMUS_SEG_REPEAT_INFINITE); 
+		
+	// Downloads the segment to the performance
+
+	CSegment1.Download(CPortPerformance);
+		
+	// Plays the segment
+
+	CPortPerformance.PlaySegment(CSegment1);
+		
+	cout &lt;&lt; &quot;Playing a segment with the port performance. Press a key to continue...\n&quot; &lt;&lt; endl;
+
+	getch();
+
+	// Stops the playing segment
+
+	CPortPerformance.Stop(CSegment1);
+
+	// Downloads the segment to the audiopath performance
+
+	CSegment1.Download(CAPathPerformance);
+
+	// Plays the segment in the performance
+
+	CAPathPerformance.PlaySegment(CSegment1,NULL);
+
+	cout &lt;&lt; &quot;Playing a segment with the audiopath performance. Press a key to continue...\n&quot; &lt;&lt; endl;
+
+	getch();
+
+	// Stops the current playing segment
+
+	CAPathPerformance.Stop(CSegment1);
+
+</pre>
+
+<p>Using the <code>CDLSLoader::LoadSegment&nbsp;</code>method we can load either a
+MIDI or a WAVE (.WAV) file representing an audio sequence. We just need to specify the format of the file in the third parameter, where a TRUE
+boolean value indicates that we are trying to load a standard MIDI file (without
+attached DLS data) and a FALSE value indicates that we are going to load a wave, a
+segment or a MIDI file containing DLS. Optionally, we
+can specify how many times we want our sequence to be repeated. Therefore, if we
+call the <code>CSegment::SetRepeats</code>&nbsp;with the
+DMUS_SEG_REPEAT_INFINITE flag, the sequence will be repeated ad infinitum.<br>
+If we are using a software synthesizer, it is mandatory to call
+<code>CSegment::Download</code> in order to download the file data to the
+performance synthesizer. This is not necessary when non-software synthesizer
+ports are added.&nbsp;<br>
+ Once we have downloaded the sequence to the
+performance we can proceed to either play or stop it by using the
+<code>CPortPerformance::PlaySegment</code> and <code>CPortPerformance::Stop</code> methods respectively.
+Similarly, we can proceed to play a CSegment over the CAPathPerformance using the
+same methods, but this time, we need to call <code>CSegment::Download</code>.</p>
+
+<h4>&nbsp;<a name="3.2.5"></a>3.2.5 3D Segment positioning</h4>
+
+<p>The main pourpose of this section is to explain the use of a C3DSegment. It
+is a all-in-one piece for playing sounds in the 3D space.</p>
+
+<pre>	C3DSegment1.Initialize(CAPathPerformance);
+
+	// Clones the normal segment to a 3D segment
+
+	C3DSegment1 = CSegment1;
+
+	// Plays the 3D segment in the audiopath performance
+
+	CAPathPerformance.PlaySegment(C3DSegment1);
+
+	// Positions the 3D buffer one unit in the negative X-axis
+
+	C3DSegment1.SetBufferPosition(-1.0,0.0,0.0);
+
+	cout &lt;&lt; &quot;Playing a 3D segment on your left. Press a key to continue...\n&quot; &lt;&lt; endl;
+
+	getch();
+
+	// Positions the 3D buffer one unit in the positive X-axis
+
+	C3DSegment1.SetBufferPosition(1.0,0.0,0.0);
+
+	cout &lt;&lt; &quot;Playing a 3D segment on your right. Press a key to continue...\n&quot; &lt;&lt; endl;
+
+	getch();
+
+	CAPathPerformance.Stop(C3DSegment1);
+</pre>
+
+<p>First of all, the C3DSegment object must be initialized with a reference to
+the AudiopathPerformance object where it is to be played. This will
+initialize its inherited C3DBuffer and C3DListener objects and its internal
+AudioPath.<br>
+The <code>C3DSegment1 = CSegment1</code>&nbsp;expression is not necessary in
+the example since you can
+initialize a C3DSegment object by calling <code>CDLSLoader::LoadSegment</code>;
+it is there just for illustrative purpose. The reason is that DirectMidi supports &quot;=&quot; operator overloading for the CSegment base class and the
+C3DSegment inherited class. It just clones the audio data sequence and invokes a new
+<code>IDirectMusicSegment</code> interface for the new object.<br>
+After initializing the C3DSegment we can proceed to play the segment and
+position its DirectSound 3D buffer by calling <code>C3DSegment::SetBufferPosition</code>.
+It will apply space positioning to the playing sound.</p>
+
+<h4><a name="3.2.6"></a> 3.2.6 MIDI functions with
+performances</h4>
+
+<p>One of the most important features in DirectMidi is the posibility to use MIDI
+commands and functions to apply different effects such as 3D positioning while
+having an
+unlimited number of notes playing at a time. In the next few lines we can see
+the base case. It shows how to send a
+NOTE_ON MIDI message to the port performance.&nbsp;</p>
+
+<pre>	CPortPerformance.SendMidiMsg(NOTE_ON,64,127,1);
+
+	cout &lt;&lt; &quot;Sending a MIDI note-on to the port performance on PChannel 1. Press a key to continue...\n&quot; &lt;&lt; endl;
+
+	getch();
+
+	CPortPerformance.SendMidiMsg(NOTE_OFF,64,127,1);</pre>
+
+<p>The fourth parameter in the <code>CPortPerformance::SendMidiMsg</code> 
+method is the <b>PChannel </b>or Performance channel. It is here where the set of MIDI channel and channel group assigned to the downloaded
+segment are mapped. This PChannel contains a specific instrument and MIDI data.
+Therefore, we will never use MIDI channels when using performances in the future.</p>
+
+<h5><b>
+<a name="3.2.6.1"></a>
+3.2.6.1 Sending a note-on in the 3D space</b></h5>
+
+<p>The following simple code snippet, sends a NOTE_ON to the audiopath performance and
+positions the note on the left. When sending MIDI messages to the audiopath performances, we must provide an
+additional fifth parameter to the
+<code>CAudioPathPerformance::SendMidiMsg</code>  that indicates the audiopath
+where we
+are working. In the example below we use the internal audiopath inside the
+C3DSegment object which controls 3D positioning.&nbsp;</p>
+
+<pre>
+	C3DSegment1.SetBufferPosition(-1.0,0.0,0.0);
+
+	// Sends a note-on with the 3D segment audiopath configuration
+
+	CAPathPerformance.SendMidiMsg(NOTE_ON,64,127,0,C3DSegment1.GetAudioPath());
+
+	cout &lt;&lt; &quot;Playing a MIDI note-on with the audio path performance on your left. 
+	Press a key to continue...\n&quot; &lt;&lt; endl;
+
+	getch();
+
+	CAPathPerformance.SendMidiMsg(NOTE_OFF,64,127,0,C3DSegment1.GetAudioPath());</pre>
+
+<h5><a name="3.2.6.2"></a>
+3.2.6.2 Loading and playing a DLS instrument in 3D</h5>
+
+<p>The following code explains how to play a NOTE_ON MIDI command using DLS
+instruments and position it in the 3D space. It also presents some new
+DirectMidi methods to work with audiopaths. See below:</p>
+
+<pre>	///////////////////////////// PLAYING A DLS INSTRUMENT IN 3D /////////////////////
+
+	// Gets the defult audiopath for the performance
+
+	CAPathPerformance.GetDefaultAudioPath(CAudioPath1);
+
+	// Gets a 3D buffer
+
+	CAudioPath1.Get3DBuffer(C3DBuffer1);
+
+	// Positions the 3D buffer one unit in the negative X-axis
+
+	C3DBuffer1.SetBufferPosition(-1.0,0.0,0.0);
+
+	// Unloads the segment from the audio path performance
+
+	CSegment1.Unload(CAPathPerformance);
+
+	// Loads the default GM/GS collection
+
+	CLoader.LoadDLS(NULL,CCollectionA);
+
+	// Gets the instrument 215
+
+	CCollectionA.GetInstrument(CInstrument1,215);
+
+	// Assigns the patch 0
+
+	CInstrument1.SetPatch(0);
+
+	// Set up the note range
+
+	CInstrument1.SetNoteRange(0,127);
+
+	DWORD dwGroup,dwMChannel;
+
+	// Downloads the instrument to the performance channel 1
+
+	CAPathPerformance.DownloadInstrument(CInstrument1,1,&amp;dwGroup,&amp;dwMChannel);
+
+	// Selects the patch and plays the note on PChannel 1
+
+	CAPathPerformance.SendMidiMsg(PATCH_CHANGE,0,0,1,CAudioPath1);
+	CAPathPerformance.SendMidiMsg(NOTE_ON,64,127,1,CAudioPath1);
+
+	cout &lt;&lt; &quot;Playing a GM/GS DLS instrument with the audio performance on your left. 
+	Press a key to coninue...\n&quot; &lt;&lt; endl;
+
+	getch();
+
+	CAPathPerformance.SendMidiMsg(NOTE_OFF,64,0,1,CAudioPath1); </pre>
+
+<p>We start this example part introducing a new method to get the default audiopath.
+This one is the <code>CAPathPerformance::GetDefaultAudioPath</code>  method
+which retrieves the
+internally created audiopath. Once we have a reference to the object represeting the audiopath, we
+can proceed to obtain the C3DBuffer object that will perform 3D positioning in
+the application using the <code>CAudioPath::Get3DBuffer</code> method. If we
+wanted to set the position of the listener in the space we would have to
+call the <code>CAudioPath::Get3DListener</code>  method.&nbsp;&nbsp;<br>
+Before downloading a DLS instrument to the performance memory, we must unload the
+previously stored segment data from it. Therefore we call the <code>CSegment::Unload</code>
+ method to achieve this. Now, we can load the DLS data, but we must first provide a container for the instrument list in the DLS
+file, this is the <code>CCollectionA</code>
+object. After calling <code>CDLSLoader::LoadDLS&nbsp;</code>and
+passing a referece to a <code>CCollection</code> object,&nbsp;we extract a
+specific instrument from it by calling <code>CCollection::GetInstrument</code>.
+Afterwards, we set a patch number for the new instrument calling
+<code>CInstrument::SetPatch</code> and assigning it the 0 MIDI program. Finally, before proceeding to download the instrument, we should provide a
+playable note region for the instrument using the <code>CInstrument::SetNoteRange</code>
+method. Now, all is ready to download the instrument to the performance. The method which performs this
+is <code>CAPathPerformance::DownloadInstrument</code>   which is not too
+different from the previously presented method to play audiopath performances. It just
+needs the PChannel where the instrument will be assigned and two DWORD's
+for retrieving the channel group and the MIDI channel where it will be stored.
+After downloading it, we must select the patch of the instrument by
+sending a PATCH_CHANGE message with the PChannel and the patch number to be set up
+in the performance. And finally, we can proceed to play the note in the
+3D space by providing a referece to the defult audiopath (<code>CAudioPath1</code>)
+in the call to the <code>CAPathPerformance::SendMidiMsg</code> method.</p>
+
+<h5><a name="3.2.6.3"></a>
+3.2.6.3 Wave sample instruments and thruing to the 3D performance</h5>
+
+<p>In this example we will be able to test one of the most amazing features of DirectMusic. We will load a sample from a wave file (.WAV) and download
+it to the audiopath
+performance in order to apply 3D effects. Afterwards, we will activate an
+input port to attain a thru connection between the port and the performance and
+play in the space with an external keyboard. The next code explains how to
+achieve it:</p>
+
+<pre>1	///////////////////////// PLAYING A SAMPLE INSTRUMENT IN 3D ///////////////
+2
+3	// Unloads the instrument from the audiopath performance
+
+4	CAPathPerformance.UnloadInstrument(CInstrument1);
+5
+6
+7	// Gets the port where the performance channel 2 resides
+8
+9	IDirectMusicPort8* pPort = NULL;
+10
+11	CAPathPerformance.PChannelInfo(2,&amp;pPort,NULL,NULL);
+12
+13	// Initializes output port
+14
+15	COutPort2.Initialize(CDMusic);
+16
+17	// Activates ouput port from the interface
+18
+19	COutPort2.ActivatePortFromInterface(pPort);
+20
+21	CSampleInstrument CSample1;
+22
+23	// Loads the .wav file
+24
+25	CDLSLoader::LoadWaveFile(_T(&quot;.\\media\\starbreeze.wav&quot;),CSample1,DM_USE_MEMORY);
+26
+27	// Assigns the patch
+28
+29	CSample1.SetPatch(2);
+30
+31	// Sets a continuous wave loop
+32
+33	CSample1.SetLoop(TRUE);
+34
+35	// Set additional wave parameters
+36
+37	CSample1.SetWaveParams(0,0,68,F_WSMP_NO_TRUNCATION); 
+38
+39	REGION region;
+40	ARTICPARAMS articparams;
+41
+42	// Initializes structures
+43
+44	ZeroMemory(&amp;region,sizeof(REGION));
+45	ZeroMemory(&amp;articparams,sizeof(ARTICPARAMS));
+46
+47
+48	// Sets the region parameters
+49
+50	region.RangeKey.usHigh = 127;
+51	region.RangeKey.usLow = 0;
+52	region.RangeVelocity.usHigh = 127;
+53
+54	// Adjust LFO
+55
+56	articparams.LFO.tcDelay = TimeCents(10.0);
+57	articparams.LFO.pcFrequency = PitchCents(5.0);
+58
+59	// Sets the pitch envelope
+60
+61	articparams.PitchEG.tcAttack = TimeCents(0.0);
+62	articparams.PitchEG.tcDecay = TimeCents(0.0);
+63	articparams.PitchEG.ptSustain = PercentUnits(0.0);
+64	articparams.PitchEG.tcRelease = TimeCents(0.0);
+65
+66
+67	// Sets the volume envelope
+68
+69	articparams.VolEG.tcAttack = TimeCents(1.275);
+70	articparams.VolEG.tcDecay = TimeCents(0.0);
+71	articparams.VolEG.ptSustain = PercentUnits(100.0);
+72	articparams.VolEG.tcRelease = TimeCents(10.157);
+73
+74
+75	// Sets the instrument parameters
+76
+77	CSample1.SetRegion(&amp;region);
+78	CSample1.SetArticulationParams(&amp;articparams);
+79
+80	// Allocate interface memory
+81
+82	COutPort2.AllocateMemory(CSample1);
+83
+84	// Download the sample instrument to the port
+85
+86	COutPort2.DownloadInstrument(CSample1);
+87
+88
+89	// Positions the buffer
+90
+91	C3DBuffer1.SetBufferPosition(1.0,0.0,0.0);
+92
+93	// Selects patch and plays the note
+94
+95	CAPathPerformance.SendMidiMsg(PATCH_CHANGE,2,0,2,CAudioPath1);
+96
+97	CAPathPerformance.SendMidiMsg(NOTE_ON,64,127,2,CAudioPath1);
+98
+99
+100	cout &lt;&lt; &quot;Playing a downloaded WAV file with the audio path performance on the right.
+	Press a key to continue... \n&quot; &lt;&lt; endl;
+101
+102	getch();
+103
+104	///////////// PLAYING A 3D SAMPLE INSTRUMENT WITH AN EXTERNAL KEYBOARD ///////////
+105
+106	CAPathPerformance.SendMidiMsg(NOTE_OFF,64,127,2,CAudioPath1);
+107
+108	// Initializes and activates default input MIDI port
+109
+110	CInPort.Initialize(CDMusic);
+111	CInPort.GetPortInfo(1,&amp;PortInfo);
+112	CInPort.ActivatePort(&amp;PortInfo);
+113
+114	// Finds out which group and MIDI channel are assigned to PChannel 2 
+115
+116	CAPathPerformance.PChannelInfo(2,NULL,&amp;dwGroup,&amp;dwMChannel);
+117
+118	// Activates the thru over the retrieved MIDI channel and group
+119
+120	CInPort.SetThru(0,dwGroup,dwMChannel,COutPort2);
+121
+122	cout &lt;&lt; &quot;Activating MIDI thru from input MIDI channel 0 to PChannel 2.\n&quot; \
+123	&quot;Play with an external keyboard. Press a key to continue... \n&quot; &lt;&lt; endl;
+124	
+125	getch();</pre>
+
+<p>Firstly, before starting the sample loading, we proceed to unload the DLS instrument previously used, calling <code>CAPathPerformance::UnloadInstrument</code>.<br>
+In order to download the sample to the performance, we will need to know which default <code>IDirectMusicPort8</code>
+the performance is using to access to the wave-table memory. Therefore, we
+inquire this port by calling the <code>CAPathPerformance::PChannelInfo</code> 
+ with a PChannel number as a parameter. This method provides a reference to an increased <code>IDirectMusicPort8</code> interface
+pointer related to the specified PChannel.&nbsp;Once we have obtained the <code>IDirectMusicPort8</code> interface pointer, we
+will be able to handle it in a higher level by activating a <code>COutputPort</code> object type
+through a call to the <code>COutputPort::ActivatePortFromInterface</code> 
+method (line
+19th).<br>
+After this important process, we can continue instancing a <code>CSampleInstrument</code>
+ object type in order to load a wave file using the <code>CDLSLoader::LoadWaveFile</code>
+method. Afterwards, we proceed to apply instrument parameters such as patch number,
+unity key note, looping, regions and articulations as shown in lines 29-78th.&nbsp;<br>
+ Before
+downloading the data to the port wave-table, we need to allocate memory for the download interfaces,
+so we will call&nbsp;the <code>COutputPort::AllocateMemory</code> method. Finally, we can download the PCM data
+with the <code>COutputPort::DownloadInstrument</code>  method and play the note
+in 3D space through the PChannel 2 as commented in the 91-97th lines.&nbsp;<br>
+<br>
+The second part of the example above explains how to activate the MIDI thru from
+the default input port to the performance. To do this, we will need to
+activate a <code>CInputPort</code> object (lines&nbsp;110-112th) and obtain the
+channel group and the MIDI channel assigned to the PChannel 2. Once we have got
+this two parameters, we can proceed to activate the thru from the 0 MIDI channel
+in our external MIDI port to the PChannel that contains the MIDI
+channel and the channel group previously obtained in the call to
+<code>CAPathPerformance::PChannelInfo</code>. In this case it is the number 2.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+
+<h4><a name="3.2.7"></a> 3.2.7 Advanced audio features</h4>
+
+<p>This last section explains how to apply advanced audio FX by using DMO's supplied by DirectX.&nbsp;<br>
+DMO stands for DirectX Media Object and is a COM object that processes
+multimedia data streams from buffers allocated by the client. Basically the DMO
+is implemented as a COM object in a dll library and registered in the system. If
+you want to learn more about it you can read the <a href="#4"> More Information</a> section of
+this article.&nbsp;<br>
+ In
+the next lines it is explained how to apply Reverberation effects to the downloaded
+sample instrument. See below:</p>
+
+<pre>	//////////////////////// RETRIEVING A STANDARD DMO OBJECT ///////////////////
+
+	// Releases the old audiopath handler
+
+	CAudioPath1.ReleaseAudioPath();
+
+	// Removes the default audiopath
+		
+	CAPathPerformance.RemoveDefaultAudioPath();	
+
+	// Creates a new audiopath
+
+	CAPathPerformance.CreateAudioPath(CAudioPath1,DMUS_APATH_SHARED_STEREOPLUSREVERB,64,TRUE);
+
+	// Declares a DMO interface pointer
+
+	CComPtr&lt;IDirectSoundFXWavesReverb8&gt; pEffectDMO;
+
+	// Gets the DMO
+
+	CAudioPath1.GetObjectInPath(DMUS_PCHANNEL_ALL,DMUS_PATH_BUFFER_DMO,
+	1,GUID_All_Objects,0,IID_IDirectSoundFXWavesReverb8,(void**)&amp;pEffectDMO);
+
+	// Maximum reverberation 
+
+	DSFXWavesReverb FX; 
+
+	FX.fInGain  	= DSFX_WAVESREVERB_INGAIN_MAX; 
+	FX.fReverbMix 	= DSFX_WAVESREVERB_REVERBMIX_MAX; 
+	FX.fReverbTime 	= DSFX_WAVESREVERB_REVERBTIME_MAX; 
+	FX.fHighFreqRTRatio = DSFX_WAVESREVERB_HIGHFREQRTRATIO_MAX; 
+
+	pEffectDMO-&gt;SetAllParameters(&amp;FX); 
+
+	cout &lt;&lt; &quot;Playing a sample on PChannel 2 with maximum reverberation.\n&quot; \
+	&quot;Play with an external keyboard. Press a key to end the application...\n&quot; &lt;&lt; endl;
+
+	getch();
+}
+catch (CDMusicException&amp; DMExcp)
+{
+	cout &lt;&lt; &quot;\n&quot; &lt;&lt; DMExcp.GetErrorDescription() &lt;&lt; &quot;\n&quot; &lt;&lt; endl;
+}
+
+return 0;
+}</pre>
+
+<p>Before applying the effect to the performance, it's
+important to release the old audiopath which was configured for 3D positioning
+and doesn't allow retrieving FX interfaces. Therefore, we call the <code>CAudioPath::ReleaseAudioPath</code> method to remove the references to the last
+audiopath.&nbsp;After releasing it, we can proceed to create a new audiopath
+which shares its FX buffers.<br>
+So we call the <code>CAPathPerformance::CreateAudioPath</code> method with
+DMUS_APATH_SHARED_STEREOPLUSREVERB as a parameter to create it. Previously apply the effect,
+it's necessary to instance a pointer to a
+<code>IDirectSoundFXWavesReverb8</code> handled by the <code>CComPtr </code>ATL template.
+This template will automatically release the COM interface references. Then, we can get the
+reference to the DMO object by calling the <code>CAudioPath::GetObjectInPath</code> method with
+the DMUS_PCHANNEL_ALL parameter to search in all PChannels, the DMUS_PATH_BUFFER_DMO
+parameter to get a DMO object in a buffer, the 1 index representing the buffer
+in which the DMO resides, the class identifier of the object, the 0 index to
+find the first matching object and the FX interface pointer. If success is
+returned by the pevious method
+call, we are ready to apply the effect by filling the suitable parameters in the
+<code>DSFXWavesReverb</code> members and calling the
+<code>IDirectSoundFXWavesReverb8::SetAllParameters</code> interface method to
+execute it.<br>
+The next table shows the different FX interfaces that can be retrieved from
+the <b> stereo plus reverb</b> audiopath:</p>
+
+<table bgcolor="#FF9900" cellspacing="1" width="100%">
+  <tr vAlign="top">
+    <td width="33%" bgcolor="#FFCC66">
+      <p align="center"><b><i>rguidInterface</i></b></td>
+    <td width="33%" bgcolor="#FFCC66">
+      <p align="center"><b><i>*ppObject</i></b></td>
+    <td width="33%" bgcolor="#FFCC66">
+      <p align="center"><b>Description</b></td>
+  </tr>
+  <tr vAlign="top">
+    <td width="33%" bgcolor="#FFFFFF">IID_IDirectSoundFXGargle8</td>
+    <td width="33%" bgcolor="#FFFFFF"><b>IDirectSoundFXGargle8</b></td>
+    <td width="33%" bgcolor="#FFFFFF" align="center"><b>Gargle</b></td>
+  </tr>
+  <tr vAlign="top">
+    <td width="33%" bgcolor="#FFFFFF">IID_IDirectSoundFXChorus8</td>
+    <td width="33%" bgcolor="#FFFFFF"><b>IDirectSoundFXChorus8</b></td>
+    <td width="33%" bgcolor="#FFFFFF" align="center"><b>Chorus</b></td>
+  </tr>
+  <tr vAlign="top">
+    <td width="33%" bgcolor="#FFFFFF">IID_IDirectSoundFXFlanger8</td>
+    <td width="33%" bgcolor="#FFFFFF"><b>IDirectSoundFXFlanger8</b></td>
+    <td width="33%" bgcolor="#FFFFFF" align="center"><b>Flanger</b></td>
+  </tr>
+  <tr vAlign="top">
+    <td width="33%" bgcolor="#FFFFFF">IID_IDirectSoundFXEcho8</td>
+    <td width="33%" bgcolor="#FFFFFF"><b>IDirectSoundFXEcho8</b></td>
+    <td width="33%" bgcolor="#FFFFFF" align="center"><b>Echo</b></td>
+  </tr>
+  <tr vAlign="top">
+    <td width="33%" bgcolor="#FFFFFF">IID_IDirectSoundFXDistortion8</td>
+    <td width="33%" bgcolor="#FFFFFF"><b>IDirectSoundFXDistortion8</b></td>
+    <td width="33%" bgcolor="#FFFFFF" align="center"><b>Distortion</b></td>
+  </tr>
+  <tr vAlign="top">
+    <td width="33%" bgcolor="#FFFFFF">IID_IDirectSoundFXCompressor8</td>
+    <td width="33%" bgcolor="#FFFFFF"><b>IDirectSoundFXCompressor8</b></td>
+    <td width="33%" bgcolor="#FFFFFF" align="center"><b>Compressor</b></td>
+  </tr>
+  <tr vAlign="top">
+    <td width="33%" bgcolor="#FFFFFF">IID_IDirectSoundFXParamEq8</td>
+    <td width="33%" bgcolor="#FFFFFF"><b>IDirectSoundFXParamEq8</b></td>
+    <td width="33%" bgcolor="#FFFFFF" align="center"><b>ParamEq</b></td>
+  </tr>
+  <tr vAlign="top">
+    <td width="33%" bgcolor="#FFFFFF">IID_IDirectSoundFXWavesReverb8</td>
+    <td width="33%" bgcolor="#FFFFFF"><b>IDirectSoundFXWavesReverb8</b></td>
+    <td width="33%" bgcolor="#FFFFFF" align="center"><b>Reverb</b></td>
+  </tr>
+  <tr vAlign="top">
+    <td width="33%" bgcolor="#FFFFFF">IID_IDirectSoundFXI3DL2Reverb8</td>
+    <td width="33%" bgcolor="#FFFFFF"><b>IDirectSoundFXI3DL2Reverb8</b></td>
+    <td width="33%" bgcolor="#FFFFFF" align="center"><b>I3DL2Reverb</b></td>
+  </tr>
+</table>
+
+<h4><a name="3.2.8"></a>3.2.8 Exception handling</h4>
+
+<p>The implementation of the DirectMidi class library provides assertion
+and failure detection in each line of the source code where a call to a
+DirectMusic COM method is made. This prevents error situations when a bad call is made,
+either by invoking the function in the wrong order or by supplying incorrect
+parameters such as non-initialized variables.&nbsp;<br>
+Looking at the scheme of a DirectMidi wrapper function we can see that the
+method provides exhaustive information about the class member function, the line
+and the HRESULT description where the exception was thrown:</p>
+
+<pre>HRESULT CMasterClock::ActivateMasterClock(LPCLOCKINFO ClockInfo)
+{
+	HRESULT hr = DM_FAILED;
+	TCHAR strMembrFunc[] = _T(&quot;CMasterClock::ActivateMasterClock()&quot;);
+
+	if (!m_pMusic8 || !ClockInfo) throw CDMusicException(strMembrFunc,hr,__LINE__);
+
+	if (FAILED(hr = m_pMusic8-&gt;SetMasterClock(ClockInfo-&gt;guidClock)))
+		throw CDMusicException(strMembrFunc,hr,__LINE__);
+
+	if (FAILED(hr = m_pMusic8-&gt;GetMasterClock(&amp;ClockInfo-&gt;guidClock,&amp;m_pReferenceClock)))
+		throw CDMusicException(strMembrFunc,hr,__LINE__);
+
+	return S_OK;
+} </pre>
+
+<p>Therefore, when we catch a DirectMidi exception through a reference to a
+<code>CDMusicException</code>  object, we can obtain information about the error with the
+following class members:</p>
+
+<p class="FeatureBox">&nbsp;*<b> HRESULT m_hrCode: </b>HRESULT code whith the
+DirectMusic API call failure</p>
+<p class="FeatureBox">&nbsp;* <b>TCHAR m_strMethod: </b>UNICODE/MBCS string
+containing a method description where the error was generated.</p>
+
+<p class="FeatureBox">&nbsp;* <b>INT</b> <b>m_nLine: </b>Number of the line in the
+module where the error was produced.</p>
+
+<p class="FeatureBox">&nbsp;* <b>LPCTSTR GetErrorDescription(): </b>Retrieves a
+complete error description with the previous commented members.</p>
+<p class="FeatureBox">&nbsp;* <b>LPCTSTR ErrorToString(): </b>Returns a string
+with a definition of the generated error.</p>
+
+<h2><a name="4"></a>
+4. More information</h2>
+
+<p>You can find more information about DirectMusic and DirectX in the <a href="http://www.microsoft.com/directx" target="_blank">Microsoft
+MSDN </a>on the net or in the DirectX SDK documentation. If you are looking for
+more information about DirectMIDI you can visit the <a href="http://directmidi.sourceforge.net" target="_blank">DirectMIDI
+homepage</a> in the sourceforge.net website.<br>
+More information about the DMO architecture and implementation can be found in this
+<a href="http://msdn.microsoft.com/archive/default.asp?url=/archive/en-us/directx9_c/directx/htm/dmoarchitecture.asp" target="_blank">MSDN
+link</a>.&nbsp;</p>
+
+<h2><a name="5"></a>
+5. The demo application</h2>
+
+<p>The demo application called Virtual Island is a simple 3D viewer inspired in
+a distant lost island in the Pacific Ocean. When you get into it, you can hear all the sounds that surround you like waves, seagulls and wind.<br>
+This program hasn't got any practical utility in the real world but it is useful to
+check the DirectMidi features like 3D positioning and audiopaths. It's
+completely programmed in C++ using OpenGL functions and DirectX and the free
+source code can be found in the <a href="http://directmidi.sourceforge.net">DirectMIDI
+homepage</a> in the contributions section.&nbsp;&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p align="center"><img border="0" src="island3.jpg" width="370" height="287"></p>
+
+<p align="center"><i>Distant seagulls flying into the deep blue sky</i></p>
+
+<p align="center"><img border="0" src="island2.jpg" width="370" height="287"></p>
+
+<p align="center">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>&nbsp;&nbsp;Island
+overview from the top</i></p>
+
+<h2><a name="6"></a>6. History</h2>
+
+<p>&nbsp;
+<table borderColor="#cccccc" height="782" cellSpacing="1" width="100%" bgColor="#ff9900" border="0">
+  <tbody>
+    <tr>
+      <td width="46%" bgColor="#fbedbb" height="28"><b>MidiStation features</b></td>
+      <td width="54%" bgColor="#fbedbb" height="28"><br>
+        <b>DirectMidi changes</b><br>
+      </td>
+    </tr>
+    <tr>
+      <td vAlign="top" borderColor="#ffffff" bgColor="#ffffff" height="746">
+        <p><br>
+        MidiStation 1.4.4 features:</p>
+        <ul>
+          <li>All hardware MIDI ports available
+          <li>Interactive built-in music keyboard
+          <li>Connection to an external MIDI keyboard
+          <li>Visualization list of the external and internal keyboard messages
+          <li>GM instrument support
+          <li>Octave range selection
+          <li>Recording and playback</li>
+        </ul>
+        <p>MidiStation 1.8.4 features:</p>
+        <ul>
+          <li>All hardware and software MIDI ports available
+          <li>Internal GM/GS set load
+          <li>PC keyboard octave control
+          <li>Improved playback system
+          <li>Message list guideline</li>
+        </ul>
+        <p>MidiStation 1.9.0 features:</p>
+        <ul>
+          <li>Built-in and reusable keyboard control
+          <li>Implicit multithread synchronization
+          <li>Full octave range selection
+          <li>Improved PC keyboard control
+          <li>Hand cursor</li>
+        </ul>
+        <p>MidiStation 1.9.1 features:</p>
+        <ul>
+          <li>Fixed running status bug (Andras22 bug)
+          <li>Fixed DLS port bug
+          <li>Fixed message list bugs</li>
+        </ul>
+        <p>MidiStation 1.9.2 features:</p>
+        <ul>
+          <li><font face="Verdana" size="2">Loading and saving of .MDS sequenced
+            files</font>
+          <li><font face="Verdana" size="2">Unlimited recording</font></li>
+        </ul>
+        <p>&nbsp;</p>
+      </td>
+      <td vAlign="top" bgColor="#ffffff" height="746">
+        <p><br>
+        DirectMIDI 2.0b changes:</p>
+        <ul>
+          <li>Improved class destructors
+          <li>Software synthesizers available
+          <li>Added flexible conversion functions
+          <li>SysEx reception and sending enabled
+          <li>Better method to enumerate and select MIDI ports
+          <li>Restructured the class system
+          <li>Adapted the external thread to a pure virtual function</li>
+        </ul>
+        <p><br>
+        DirectMIDI 2.1b changes:</p>
+        <ul>
+          <li>Added exception handling
+          <li>Fixed bugs with channel groups
+          <li>Redesigned class hierarchy
+          <li>DirectMIDI wrapped in the directmidi namespace
+          <li>UNICODE/MBCS support for instruments and ports
+          <li>Added DELAY effect to software synthesizer ports
+          <li>Project released under GNU (General Public License) terms<br>
+          </li>
+        </ul>
+        <p>DirectMIDI 2.2b changes:</p>
+        <ul>
+          <li>Redesigned class interfaces
+          <li>Safer input port termination thread
+          <li>New CMasterClock class
+          <li>DLS files can be loaded from resources
+          <li>DLS instrument note range support
+          <li>New CSampleInstrument class added to the library
+          <li>Direct downloading of samples to wave-table memory
+          <li>WAV file sample format supported
+          <li>New methods added to the output port class
+          <li>Fixed small bugs</li>
+        </ul>
+        <p>DirectMIDI 2.3b changes:</p>
+        <ul>
+          <li>Added new DirectMusic classes for audio handling
+          <li>Improved CMidiPort class with internal buffer run-time resizing
+          <li>3D audio positioning
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p align="left">&nbsp;</p>
+<p align="center">&nbsp;</p>
+<p align="center">&nbsp;</p>
+
+<p>&nbsp;</p>
+
+</body>
+</html>

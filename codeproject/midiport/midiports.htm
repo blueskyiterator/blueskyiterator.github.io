@@ -1,0 +1,592 @@
+<!-- HTML for article "Developing MIDI applications with DirectMusic" by Carlos Jiménez de Parga,Carlos Jiménez de Parga
+     URL: http://www.codeproject.com/audio/midiports.asp
+
+     Article content copyright Carlos Jiménez de Parga,Carlos Jiménez de Parga
+     All formatting, additions and alterations Copyright © CodeProject, 1999-2004
+-->
+<!----------------------------- Ignore ----------------------------->
+
+<head>
+<link rel="stylesheet" type=text/css href="http://www.codeproject.com/styles/global.css">
+</head>
+
+<hr size=1 noshade>
+<!----------------------------- Ignore ----------------------------->
+
+
+<!----------------------------- Article Starts ----------------------------->
+<H1>Developing MIDI applications with DirectMusic</H1>
+<UL class=download>
+<LI><a href="http://directmidi.sourceforge.net/midistation.htm">Download executable demo project (DirectX 8.0 or above required)&nbsp;</a> </LI></UL>
+<P>&nbsp;<IMG alt="Sample Image" src="MidiStation.gif" width=470><BR>
+<H2><A name=dm0></A>0. Index</H2>
+<P><A href="#dm0">0. Index</A><BR><A href="#dm1">1. Introduction</A><BR><A href="#dm2">2. What about MIDI?</A><BR>&nbsp;&nbsp;&nbsp; <A href="#dm21">2.1 What is MIDI?</A><BR>&nbsp;&nbsp;&nbsp;<A href="#dm22"> 2.2 The MIDI specification</A><BR><A href="#dm3">3. Computers playing music</A><BR>&nbsp;&nbsp;&nbsp; <A href="#dm31">3.1 DirectMusic and MIDI</A><BR>&nbsp;&nbsp;&nbsp; <A href="#dm32">3.2 Main DirectMusic COM Interfaces for Win32 MIDI programming</A><BR>&nbsp;&nbsp;&nbsp; <A href="#dm33">3.3 Developing applications with the DirectMIDI class library</A>&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <A href="#dm331">3.3.1 Introduction - DirectMIDI layout</A><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <A href="#dm332">3.3.2 Starting the application</A><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <A href="#dm3321">3.3.2.1 First Step: Setting up the development environment</A><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <A href="#dm3322">3.3.2.2 Second Step: The first lines of code</A><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A href="#dm3323"> 3.3.2.3 Third Step: Preparing the music capture</A><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <A href="#dm3324">3.3.2.4 Fourth Step: Initializing objects</A><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <A href="#dm3325">3.3.2.5 Fifth Step: Starting the music capture</A><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="#dm3326">3.3.2.6 Sixth Step: Upgrading the instrument limit</a><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <A href="#dm33261">3.3.2.6.1 High level DLS</A><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <A href="#dm33262">3.3.2.6.2 Low level DLS</A><BR><B>&nbsp;&nbsp;&nbsp;</B> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <A href="#dm3327">3.3.2.7 Seventh Step: Closing down the application</A><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <A href="#dm333">3.3.3 Exception handling</A><BR><A href="#dm4">4. More information</A><BR><A href="#dm5">5. The Demo application</A><BR><A href="#dm6">6. History</A>&nbsp;&nbsp;&nbsp;</P>
+<H2><A name=dm1></A>1. Introduction</H2>The main purpose of this article is to give a basic understanding of the standard music communication method (MIDI) and explaining how DirectMusic controls the music synthesizer features. It also details how to use the<B> </B><CODE>DirectMIDI</CODE> class library to develop applications based on MIDI. 
+<H2><A name=dm2></A>2. What about MIDI?</H2>
+<H3><A name=dm21></A>2.1 What is MIDI?</H3>MIDI stands for Musical Instrument Digital Interface and is a digital communication protocol. After the creation in August 1983 of MIDI 1.0 Specification every device that has MIDI capabilities must work with any other instrument that uses the same specification using the same data structures and formats. This protocol is a language which allows connecting different instruments from different manufacturers and providing a link that is capable of transmitting and receiving digital data which encode different commands to which the other instrument must comply. 
+<P>These commands are based on the MIDI specification and include a common language that provides information about events, such as note-on, note-off, velocity, timing information, System Exclusive (SysEx) and patch change. 
+<P>MIDI information is transmitted through a MIDI cable that has DIN-type male plug connectors with five pins. Two of the pins are used to transfer digital binary information (MIDI Code). One of the pins issues a steady stream of five volts, while the other pin alternates between 5 volts and 0 volts to represent binary information (on and off). The third pin is a ground and the remaining two pins are currently not in use. 
+<P>This serial interface was chosen by MIDI manufacturers because it is less expensive than a parallel interface and has longer range. The speed of a MIDI serial interface is 31,250 bits per second. 10 bits are needed for every MIDI digital word, therefore allowing the transmission of 3125 messages per second. 
+<H3><A name=dm22></A>2.2 The MIDI specification</H3>The MIDI specification is published and maintained by the <A href="http://www.midi.org/" target=_blank>MIDI Manufacturers Association (MMA)</A>. The MMA was formed in 1984 to keep and enhance the MIDI specification so that no one company would have control. It is comprised of over one hundred hardware and software companies from both the computer and music industries with the aim to improve and standardize the capabilities of MIDI-based products. A complete list of the <A href="http://www.midi.org/about-mma/mfr_id.shtml" target=_blank>manufacturer's ID numbers</A> can be found at the MMA site. 
+<P>The use of MIDI and the implementation of the specification is available to anyone without restriction, but the official document which describes the complete MIDI specification is copyrighted and not accessible on any WWW site. The specification details all of the approved <A href="http://www.midi.org/about-midi/table1.shtml" target=_blank>MIDI messages and uses </A>including General MIDI and Standard MIDI files. At present the MMA keeps specifications for the latest MIDI technlogies such as GM2 (General MIDI 2), DLS2.1(Downloadable Sounds 2.1) and GM Lite for mobile applications. 
+<H2><A name=dm3></A>3. Computers playing music</H2>
+<P>One of the advantages of the MIDI system is the possibility to use a computer for editing and playing MIDI message sequences. Besides its processing speed and its storage capacity, the computer allows modifying any music parameter with great precision and simplicity.</P>
+<P>Since the creation of the MIDI standard, a great variety of commercial programs for musical composition have appeared on almost every platform. The first programs were on 32 bit-based computers like the Amiga, the Atari and also the well known Apple Macintosh.</P>
+<P>Nowadays in the PC domain there is a high level of MIDI software development under Windows as well as under Linux.</P>
+<P>The applications based on the MIDI interface have also evolved from the simple musical instrument interconnection to the domain of electronic light control, artificial intelligence and educational applications.</P>
+<P>The most common problem found when programming a MIDI-based system is the hardware-level access. Fortunately, in Windows-based PCs there are two APIs offered by the operating system which allow accessing hardware ports at the low level. These APIs are the Windows MIDI API and DirectMusic on which this article focuses and which are explained hereby.</P>
+<H3><A name=dm31></A>3.1 DirectMusic and MIDI</H3>DirectMusic is an important part of DirectX and is installed in the system as a set of components. In combination with DirectSound, DirectMusic provides a method for playing music and sound effects in games and other applications in an interactive way. Its API provides a higher abstraction layer to DirectSound which makes easy mixing sounds and applying effects like 3D positioning. It also allows performing the playback of multiple segments simultaneously and MIDI files giving more realism to the games. One of the most exciting features in DirectMusic is the possibility to control MIDI devices for receiving and sending musical data and the use of DLS2 (Downloadable Sounds Level 2 standard) which provides a higher-quality sound synthesis and extends the number of sound fonts. 
+<H3><A name=dm32></A>3.2 Main DirectMusic COM interfaces for Win32 MIDI programming</H3>
+<P>DirectMusic, as a part of DirectX, uses the Component Object Model (COM technology). This means that it is object oriented and based on distributed computing. Besides the great advantages of the COM technology like location transparency, binay standard format and runtime polymorphism, the DirectMusic COM objects are composed of interfaces. In the following lines, the most important interfaces involved in a DirectMusic MIDI application are commented:<BR></P>
+<UL class=interface>
+<LI>
+<P><B>IDirectMusic8: </B>The <CODE>IDirectMusic8 </CODE>interface provides methods for managing buffers, ports, and the master clock. There should not be more than one instance of this interface per application.</P>
+<LI>
+<P><B>IReferenceClock:</B> This standard interface provides access to the master clock which is a kernel-mode hardware timer with a high resolution and is used to synchronize all audio playback in the system.The <CODE>IReferenceClock::GetTime </CODE>method returns the current time as a 64-bit integer (defined as the <CODE>REFERENCE_TIME </CODE>type) in increments of 100 nanoseconds. </P>
+<LI>
+<P><B>IDirectMusicPort8:</B> The <CODE>IDirectMusicPort8 </CODE>interface provides access to a DirectMusicPort object, which represents a device that sends or receives music data, for example the input port of an MPU-401, the output port of an MPU-401 or the Microsoft software synthesizer. </P>
+<LI>
+<P><B>IDirectMusicThru8: </B>This interface allows thruing messages from a capture port to another ports. The <CODE>IDirectMusicThru8::ThruChannel </CODE>method is used to establish or break a thruing connection between a channel on a capture port and a channel on another port.<BR><BR></P>
+<LI>
+<P><B>IDirectMusicBuffer8: </B>The <CODE>IDirectMusicBuffer8 </CODE>interface represents a buffer containing time recorded data (typically in the form of MIDI messages) to be sequenced by a port. The buffer contains a small amount of data (typically less than 200 milliseconds). The buffer is created with at least 32 bytes for standard MIDI messages.<BR><BR></P>
+<LI>
+<P><B>IDirectMusicLoader8: </B>This interface is used for loading DirectMusic objects such as segments, MIDI files, waves and DLS files. Provides garbage collection.<BR><BR></P>
+<LI>
+<P><B>IDirectMusicCollection8: </B>The <CODE>IDirectMusicCollection8 </CODE>interface manages the set of instruments of a DLS file and contains methods to download them to the synthesizer port. </P>
+<LI>
+<P><B>IDirectMusicInstrument8: </B>This interface represents an individual instrument from a DLS collection which is downloaded to the sythesizer using the <CODE>IDirectMusicPort8::DownloadInstrument </CODE></P>
+<LI>
+<P><B>IDirectMusicDownloadedInstrument8: </B>This interface is used to identify an instrument downloaded in the synthesizer. The interface pointer is then used to unload the instrument through a call to<CODE> IDirectMusicPort8::UnloadInstrument<BR><BR></CODE></P>
+<LI>
+<P><B>IDirectMusicPortDownload8: </B>The <CODE>IDirectMusicPortDownload8 </CODE>interface enables an application to communicate directly with a port that supports <NOBR>DLS</NOBR> downloading and to download memory chunks directly to the port.<BR><BR></P>
+<LI>
+<P><B>IDirectMusicDownload8: </B>The <CODE>IDirectMusicDownload8<B> </B></CODE>interface represents a contiguous memory chunk used for downloading to a <NOBR>DLS</NOBR> synthesizer port. </P></LI></UL>
+<H3><A name=dm33></A>3.3 Developing applications with the DirectMIDI class library</H3>
+<H4><B><A name=dm331></A>3.3.1 Introduction - DirectMIDI layout</B></H4>
+<P>The main kernel of the library is based on its ten related classes which define the different objects involved in a MIDI based application encapsulating the code to realize them.</P>
+<P>The next diagram shows the objects created by an application which uses DirectMIDI:</P>
+<P><img border="0" src="Diagram.gif" width="600" height="375"></P>
+<P>As you can see, there is a main object of the <CODE>CDirectMusic </CODE>class type which encapsulates the DirectMusic COM instantiation of a Win32 based application. This object is the responsible to initialize the MIDI port objects which are divided in two categories: input ports for incoming MIDI messages such SysEx data or typical MIDI 1.0 messages and output ports for sending data in SysEx format or MIDI messages. There is an additional object named <CODE>CMasterClock </CODE>which provides enumeration and selection of a hardware timer as master clock. </P>
+<P>There are another three objects related to the <CODE>COutputPort </CODE>object directly and indirectly, this is the case of the <CODE>CDLSLoader </CODE>that is the responsible to load DLS files in order to store them into a <CODE>CCollection </CODE>object. This object represents a set of instruments in DLS 1.0/2.0 data format and allows extracting its instruments to better containers for them, called <CODE>CInstruments </CODE>objects. These are the responsible to keep an instance of a particular instrument for a better handling and organization. </P>
+<P>Once we have all the instruments selected from the collections, we can proceed to download or unload them to or from a specific MIDI program in the synthesizer in order to play them.&nbsp;<BR>In addition to the <CODE>CInstrument </CODE>object, there is another similar object provided by the DirectMIDI library which allows storing&nbsp; waveform data loaded from a .wav file and programatically generated waveforms. This object, called <CODE>CSampleInstrument</CODE>, provides help functions to adjust envelopes, LFO's and regions before downloading to the output port.&nbsp;</P>
+<P>Finally, the <CODE>CDMusicException </CODE>class handles all exceptions produced in the application and shows a detailed information about the problem which generated the error.&nbsp;&nbsp;<B><BR><BR><A name=dm332></A>3.3.2 Starting the application</B> </P>
+<H5><B><A name=dm3321></A>3.3.2.1 First Step: Setting up the development environment</B></H5>
+<P>You can initiate the application in many different kinds of projects with your Visual Studio and the DirectMIDI wrapper library, such as MFC's, Win32 standalone and Win32 console applications, but to make it easier I'm going to explain how to build a simple Win32 console application that shows all the characteristics available in the library. Therefore, you must start up your Visual Studio and select a Win32 console application project with the "A simple application" option selected. Once you have created a simple project you need to include all the DirectMIDI headers and .cpp files of the class library in it. To do this, go to <B>Project</B> in the menu bar, select <B>Add to project</B>, <B>Files </B>and then add to your project all the files existing in the DirectMIDI folder
+related to the MIDI part and subfolders. Therefore, in order to create an
+application oriented to MIDI we need to include the next necessary header files:
+<b>CDirectMidi.h, CDirectBase.h and CMidiPart.h</b>&nbsp; and all the .cpp files
+required when including these headers like the CSegment.cpp. To perform this, in case you have the Visual Studio 7 (.NET) you must select the<B> Project</B> option from the main menu and then click on the <B>Add existing item</B> option to include the class library files.</P>
+<P>Now you have all the code necessary in your hands to start programming a new musical application. It's important you have installed the DirectX8/9 SDK's in your computer in order to compile and link your project correctly. If you have it already installed and configured, that's fine for this, if not, go to <B>Tools </B>in the menu bar, select <B>Options</B> and then click on the <B>Directories</B> tab to<B> </B>add the path to the DirectX8/9 headers and library files. If you have the Visual Studio 7 (.NET),&nbsp;go to <B>Tools</B> in the menu bar, click on <B>Options</B> and then open the <B>Projects</B> folder.
+Expand the <B>Show Directories for</B> combo list and select the <B>library</B> and <B>include files </B>option. Finally, add the header and library files directories to their respective lists.</P>
+<H5><B><A name=dm3322></A>3.3.2.2 Second Step: The first lines of code</B></H5>
+<P>The compiler should know what external code is going to be used in the current .cpp file of work. For this, you must use the <B>#include</B> directive in order to tell the compiler there is a reference to external code for this project in other files. The required headers are shown in the code below:</P><PRE>// ANSI I/0 headers
+#include &lt;conio.h&gt;
+#include &lt;iostream.h&gt;
+// Math header
+#include &lt;math.h&gt;
+// The class library wrapper
+#include &quot;.\\DirectMidi\\CDirectMidi.h&quot;
+// Inline library inclusion
+#pragma comment (lib,&quot;dxguid.lib&quot;) // guid definitions
+#pragma comment (lib,&quot;winmm.lib&quot;)
+#pragma comment (lib,&quot;dsound.lib&quot;)
+#pragma comment (lib,&quot;dxerr9.lib&quot;)
+
+using namespace std;	 // Standard C++ library header	
+using namespace directmidi; // the wrapper global namespace 
+
+// Maximum size for SysEx data in input port
+const int SYSTEM_EXCLUSIVE_MEM = 48000; 
+
+// Defines PI
+const double PI = 3.1415926;
+</PRE>
+<P>The directive <CODE>#Pragma comment </CODE>instructs the linker to create an object file including the required libraries. The last two lines of code above defines the constants that will be necessary in this example project. </P>
+<H5><B><A name=dm3323></A>3.3.2.3 Third Step: Preparing the music capture </B></H5>
+<P>You should know that the <CODE>CInputPort </CODE>class is the responsible for managing the incoming MIDI events. These MIDI events are captured by a thread which calls two overloaded pure virtual member functions
+defined in the <code>CReceiver</code> class depending on the type of data arrived to the port. This two different types of data can be either unstructured MIDI data (System Exclusive) or structured (typical MIDI messages). </P>
+<P>In order to override this virtual functions we need to derive a class from <CODE>CReceiver </CODE>as shown below:</P><PRE>// Derived class from CReceiver
+
+class CDMReceiver:public CReceiver
+{
+public:
+    // Overriden functions
+    void RecvMidiMsg(REFERENCE_TIME rt,DWORD dwChannel,DWORD dwBytesRead,
+                         BYTE *lpBuffer);
+    void RecvMidiMsg(REFERENCE_TIME rt,DWORD dwChannel,DWORD dwMsg);
+};
+ </PRE>
+<P>Once made this, you can program some code to process these events:</P><PRE>// Overriden function for SysEx data capture
+void CDMReceiver::RecvMidiMsg(REFERENCE_TIME lprt,DWORD dwChannel,
+                               DWORD dwBytesRead,BYTE *lpBuffer)
+{
+    DWORD dwBytecount;
+    
+    // Print the received buffer
+    for (dwBytecount = 0;dwBytecount &lt; dwBytesRead;dwBytecount++)
+    {    
+        cout.width(2);
+        cout.precision(2);
+        cout.fill('0');        
+        cout &lt;&lt; hex &lt;&lt; static_cast&lt;int&gt;(lpBuffer[dwBytecount]) &lt;&lt; &quot; &quot;;
+        if ((dwBytecount % 20) == 0) cout &lt;&lt; endl;
+        if (lpBuffer[dwBytecount] == END_SYS_EX)
+            cout &lt;&lt; &quot;\nSystem memory dumped&quot; &lt;&lt; endl;
+    }    
+}
+
+// Overriden function for structured MIDI data capture
+void CDMReceiver::RecvMidiMsg(REFERENCE_TIME lprt,DWORD dwChannel,
+                               DWORD dwMsg)
+{
+    unsigned char Command,Channel,Note,Velocity;
+    
+    // Extract MIDI parameters from a MIDI message    
+    CInputPort::DecodeMidiMsg(dwMsg,&amp;Command,&amp;Channel,&amp;Note,&amp;Velocity);
+    
+    if (Command == NOTE_ON) //Channel #0 Note-On
+        {                    
+        cout &lt;&lt; &quot;Received on channel &quot; &lt;&lt; static_cast&lt;int&gt;(Channel) &lt;&lt; 
+                &quot; Note &quot; &lt;&lt; static_cast&lt;int&gt;(Note) 
+             &lt;&lt; &quot; with velocity &quot; &lt;&lt; static_cast&lt;int&gt;(Velocity) &lt;&lt; endl;
+    }
+}</PRE>
+<P>The first function reads the entire received buffer of <CODE>SysEx</CODE> data, prints the values formatted in hexadecimal numeric base and detects when the synthesizer reaches the end of data dump (End of SysEx data). Note that not all the SysEx data is received in an unique call to <CODE>RecvMidiMsg</CODE>, multiple consecutive calls can be made to this member function.<BR>The second member function receives a typical MIDI message such as note-on or program-change in a double word format. If you want to parse the message in parts you must use the static function <CODE>CInputPort::DecodeMidiMsg</CODE> to extract each MIDI byte.</P>
+<H5><B><A name=dm3324></A>3.3.2.4 Fourth Step: Initializing objects</B></H5>
+<P>In this step we declare the main objects that will be used along the application. They are shown below:</P><PRE>int main(int argc, char* argv[])
+{
+    CDirectMusic CDMusic;
+    CInputPort   CInPort;
+    CDMReceiver  Receiver;	
+    COutputPort  COutPort;
+    CDLSLoader   CLoader;
+    CCollection  CCollectionA,CCollectionB;
+    CInstrument  CInstrument1,CInstrument2;
+    CSampleInstrument CSample1,CSample2;	
+
+// Continues </PRE>
+<P>The first line declares an object of type <CODE>CDirectMusic</CODE> that is the responsible for instancing and initializing DirectMusic and will be the last object to be destroyed. The next one is the <CODE>CInputPort</CODE>
+that handles input ports. The third one is the <code>CDMReceiver</code> 
+object which is a <CODE>CReceiver</CODE> derived class type and implements the overridden functions seen above. The <CODE>COutPort</CODE> object is the responsible for sending data to the device and download instruments to the port. The last
+objects manage the downloadable sounds that will be commented in the next step. Now, you are ready to start calling the methods and activating all the MIDI system. See below:</P><PRE>    // Initialize DirectMusic
+try
+{
+    CDMusic.Initialize();
+    // Initialize ports given the DirectMusic manager object
+    COutPort.Initialize(CDMusic);
+    CInPort.Initialize(CDMusic);
+    
+// Continues      </PRE>
+<P>The following code activates the input and output ports:</P><PRE>INFOPORT PortInfo;
+DWORD dwPortCount = 0;
+    
+// Software Synthesizer selection
+do
+    COutPort.GetPortInfo(++dwPortCount,&amp;PortInfo);
+while (!(PortInfo.dwFlags &amp; DMUS_PC_SOFTWARESYNTH));
+
+// Output port activation given the port information 
+COutPort.SetPortParams(0,0,1,SET_REVERB | SET_CHORUS,44100);
+COutPort.ActivatePort(&amp;PortInfo);
+cout &lt;&lt; &quot;Selected output port: &quot; &lt;&lt; PortInfo.szPortDescription &lt;&lt; endl;
+ 
+// Input port activation, select the first one (by default)
+CInPort.GetPortInfo(1,&amp;PortInfo);
+CInPort.ActivatePort(&amp;PortInfo,SYSTEM_EXCLUSIVE_MEM);
+cout &lt;&lt; &quot;Selected input port: &quot; &lt;&lt; PortInfo.szPortDescription &lt;&lt; endl;
+
+// Sets up the receiver object
+CInPort.SetReceiver(Receiver);
+
+getch();
+
+// Continues    </PRE>
+<P>The first lines enumerate all output ports and select the first software synthesizer existing in the system given a number from 1 to <CODE>COutputPort::GetNumPorts</CODE> in the first parameter of <CODE>COutputPort::GetPortInfo</CODE>. Before calling <CODE>COutputPort::ActivatePort</CODE>, it's necessary to call the <CODE>COutputPort::SetPortParams </CODE>method to indicate the kind of features we require in the output
+port (If zero is passed to this method, the default configuration for that
+parameter will be assumed). Then we can call <CODE>COutputPort::ActivatePort</CODE> by passing a pointer to an <CODE>INFOPORT</CODE> structure to activate the ouput port using the number of channel groups and sample rate parameters passed in the call to <CODE>COutputPort::SetPortParams</CODE>. The channel group parameter is the number of MIDI channels groups to be used in the software port, each channel group being a set of 16 MIDI channels.</P>
+<P>One of the most important configurable parameters in the <CODE>COutputPort::SetPortParams</CODE> method is the sample rate parameter which is the frequency in Hz that we need to stablish for the sound quality in the output port. In this case we use 44100Hz as sample rate.</P>
+<P>In the last three lines we select the input port for MIDI capture doing exactly the same, but this time, we don't enumerate any, we limit only to select a default one. Note that there is a second parameter in <CODE>CInputPort::ActivatePort</CODE> which indicates the maximum memory size reserved to allocate system exclusive data. In this case we reserve only 46.8 Kilobytes. If you leave this optional parameter, the default value will be 32 bytes, enough space to receive standard MIDI data.
+Finally, we establish the receiver object by calling the <code>CInputPort::SetReceiver</code>
+ method. If you close the main bracket and run the application you will obtain this output: </P>
+<P><IMG alt="" src="http://www.codeproject.com/audio/midiports/Output1.gif"></P>
+<H5><B><A name=dm3325></A>3.3.2.5 Fifth Step: Starting the music capture</B> </H5>
+<P>Capturing musical data from your keyboard is very simple with DirectMIDI as soon as you have initialized the input port. If you decided to reserve space to receive system exclusive data in the call to <CODE>CInPort::ActivatePort</CODE>, now your application is ready to handle all the incoming events generated by your keyboard, including standard MIDI data. The next code explains how to activate the capture: </P><PRE>  // Activates input MIDI message handling 
+ CInPort.ActivateNotification();
+ // Redirects messages from source global channel 0 to destination 
+ // global channel 0 over channel group 0 (channels 1-16)
+ CInPort.SetThru(0,0,0,COutPort);
+    
+// Continues</PRE>
+<P>As you can see, the first line of code activates the notification of all the incoming MIDI messages using an event handler that calls its respective virtual member function already overridden in the first part of the application. <BR><BR>The next DirectMIDI feature to comment is the redirection. Using the redirection (MIDI thru) you can pass MIDI messages from a selected input MIDI port to another output MIDI port specifying the channel group, the source and destination global channel where the messages will be redirected. </P>
+<P>The next screenshot shows a SysEx data dump and a normal MIDI data capture: </P>
+<P><IMG alt="" src="http://www.codeproject.com/audio/midiports/Output3.gif"></P>
+<H5><B><a name="dm3326"></a>3.3.2.6 Sixth Step: Upgrading the instrument limit</B> </H5>
+<P>Do you experiment with new sound fonts? If this is your case, this is your lucky day. DirectMIDI supports loading multiple sounds stored in "Downloadable Sounds files" better known as DLS. This technology is the MIDI manufacturer's standard for soundfont format storage in the state-of-the-art multimedia technology. The current DLS2 file format specifies all the instrument definitions: samples, LFO's, low pass filters, loops and envelope generators which will be downloaded and rendered in the synthesizer that supports this feature. DirectMIDI supports two types of DLS operations which are: High level DLS and Low level DLS.<BR>High level DLS is a way to handle waveform instruments that can be stored in DLS 1.0 and 2.0 file formats. They can be created with an application like DirectMusic Producer that allows to configure visually a wide range of parameters previously explained. Low level DLS allows direct downloading of DLS 1.0 data chunks to the port, providing instrument articulations and region parameters from the application program.</P>
+<H5><B><A name=dm33261></A>3.3.2.6.1 High level DLS</B> </H5>
+<P>Using DLS files within your project is very simple. For this, you must only declare an object of CDLSLoader type in order to load and unload the instrument files. You will also need to declare a CCollection object to store the collections of instruments and a CInstrument object to keep a reference to a particular instrument. The code below shows how to load and unload a set of instruments to the port.</P><PRE>    // Initialize the Loader object  
+
+    CLoader.Initialize();
+    
+    // Loads the first dls file
+    CLoader.LoadDLS(&quot;.\\Media\\sample.dls&quot;,CCollectionA);
+    
+    // Loads the deafault GM collection of the software synthesizer
+    CLoader.LoadDLS(NULL,CCollectionB);
+    
+    
+    // Structure of the instrument information
+    INSTRUMENTINFO InstInfo;
+    DWORD dwInstIndex = 0;
+    
+    // Enumerates instruments in CollectionB
+    while (CCollectionB.EnumInstrument(dwInstIndex++,&amp;InstInfo) == S_OK)
+    {    
+        cout &lt;&lt; &quot;Instrument name: &quot; &lt;&lt; InstInfo.szInstName  &lt;&lt; endl;
+        cout &lt;&lt; &quot;Patch in collection: &quot; &lt;&lt; InstInfo.dwPatchInCollection 
+                     &lt;&lt; endl;
+        cout &lt;&lt; &quot;----------------------------------------&quot; &lt;&lt; endl;
+    }
+
+    
+    // Gets the instrument with index 214 from the CollectionB
+    CCollectionB.GetInstrument(CInstrument1,214);
+    // Assigns it to the MIDI program 0
+    CInstrument1.SetPatch(0);
+    
+    
+    cout &lt;&lt; &quot;\nSelected instrument: &quot; 
+      &lt;&lt; CInstrument1.m_strInstName &lt;&lt; endl;
+    cout &lt;&lt; &quot;Source collection patch &quot; 
+      &lt;&lt; CInstrument1.m_dwPatchInCollection &lt;&lt; 
+    &quot; to destination MIDI program: &quot; 
+      &lt;&lt; CInstrument1.m_dwPatchInMidi &lt;&lt; endl;
+
+    
+    // Gets the instrument with index 0 from the CollectionA
+    CCollectionA.GetInstrument(CInstrument2,0);
+    // Assigns it to the MIDI program 1
+    CInstrument2.SetPatch(1);
+    cout &lt;&lt; &quot;\nSelected instrument: &quot; 
+      &lt;&lt; CInstrument2.m_strInstName &lt;&lt; endl;
+    cout &lt;&lt; &quot;Source collection patch &quot; 
+      &lt;&lt; CInstrument2.m_dwPatchInCollection &lt;&lt; 
+    &quot; to destination MIDI program: &quot; 
+      &lt;&lt; CInstrument2.m_dwPatchInMidi &lt;&lt; endl;
+
+    // Sets the note range
+		
+    CInstrument1.SetNoteRange(0,127);
+    CInstrument2.SetNoteRange(0,127);
+
+    // Downloads the instruments to the output ports
+    COutPort.DownloadInstrument(CInstrument1);
+    
+    COutPort.DownloadInstrument(CInstrument2);
+    
+    cout &lt;&lt; &quot;\nInstruments downloaded&quot; &lt;&lt; endl;<FONT size=2>
+</FONT>    <FONT size=2>cout &lt;&lt; &quot;Playing with the instrument:&quot; 
+      &lt;&lt; CInstrument1.m_strInstName &lt;&lt; endl;
+</FONT>    <FONT size=2>cout &lt;&lt; &quot;Press a key to play with the second instrument...&quot; &lt;&lt; endl;</FONT>
+    
+    <FONT size=2>COutPort.SendMidiMsg(COutputPort::EncodeMidiMsg(PATCH_CHANGE,0,0,0),0);
+</FONT>    <FONT size=2>COutPort.SendMidiMsg(COutputPort::EncodeMidiMsg(NOTE_ON,0,40,127),0);
+</FONT>    
+    <FONT size=2>getch();
+</FONT>    <FONT size=2>COutPort.SendMidiMsg(COutputPort::EncodeMidiMsg(NOTE_OFF,0,40,0),0);
+
+</FONT>    <FONT size=2>COutPort.SendMidiMsg(COutputPort::EncodeMidiMsg(PATCH_CHANGE,0,1,0),0);
+</FONT>    <FONT size=2>COutPort.SendMidiMsg(COutputPort::EncodeMidiMsg(NOTE_ON,0,60,127),0);
+
+</FONT>    <FONT size=2>cout &lt;&lt; &quot;Playing with the instrument:&quot; 
+      &lt;&lt; CInstrument2.m_strInstName &lt;&lt; endl;
+</FONT>    <FONT size=2>cout &lt;&lt; &quot;Press a key to exit the application...&quot; &lt;&lt; endl;
+
+</FONT>    <FONT size=2>getch();
+</FONT>    <FONT size=2>COutPort.SendMidiMsg(COutputPort::EncodeMidiMsg(NOTE_OFF,0,60,0),0);
+    </FONT>// Continues         </PRE>
+<P>The first line of code initializes the loader object which calls the Win32 function <CODE>CoCreateInstance</CODE> and instantiates the COM object in the space of the process. Once you have initialized the loader object you can proceed to load the DLS file using the&nbsp; <CODE>CDLSLoader::LoadDLS</CODE> member function which takes a null terminated string representing the file name and a reference to a <CODE>CCollection</CODE> destination object where the instruments will be loaded. When the given string is null, <CODE>DirectMidi</CODE> will load the standard GM/GS set defined in the memory of the synthesizer. To find out which instruments are residing in the <CODE>CCollection</CODE> object, you must call the<CODE> Collection::EnumInstrument</CODE> function which takes a counter variable indicating the index of the instrument in the collection and a pointer to an <CODE>INSTRUMENTINFO</CODE> structure that will receive the information of the instrument i.e. the name and the patch in the collection. </P>
+<P>You can obtain a reference to an individual instrument by calling the overloaded member function <CODE>CCollection::GetInstrument</CODE> and giving a reference to an instrument object with the index in the collection. This function will fill the internal members of the <CODE>CInstrument</CODE> object with the data of the instrument. The <CODE>CInstrument::SetNoteRange </CODE>method activates the keyboard region where the instrument must respond when a note-on is produced. Finally, you will have to provide a destination for the instrument in a synthesizer MIDI program, calling the member function <CODE>COutputPort::DownLoadInstrument</CODE> and passing the reference to the instrument object. The next screenshot is a sample of the last code output: </P>
+<P>&nbsp;<IMG alt="" src="http://www.codeproject.com/audio/midiports/Output2.gif"></P>
+<H5><B><A name=dm33262></A>3.3.2.6.2 Low level DLS</B> </H5>
+<P>DirectMIDI 2.3 enables an application to communicate directly with a port that supports DLS for downloading memory chunks to it. There are two alternatives for downloading data to the port: The first one is to load the waveform from a .wav file that contains the data to playback, and the second one is to generate the waveform in memory using math instructions. In the first case, we need to load the .wav file using the static member function <CODE>CDLSLoader::LoadWaveFile </CODE>and providing the next three parameters: A pointer to the string description of the file path, a reference to the destination CSampleInstrument object and a flag indicating the desired access to the file. If the file access flag is the DM_LOAD_FROM_FILE constant, the .wav file is always read from file when required and is useful for huge files. If the flag is the DM_USE_MEMORY constant, the file remains stored in dinamic memory increasing the access speed.&nbsp;<BR>As we said before, the second alternative is to generate a waveform that can be established using the <CODE>CSampleInstrument::SetWaveForm </CODE>method, passing a BYTE pointer to the buffer with the data and a <CODE>WAVEFORMATEX</CODE> structure containing the format of the waveform (read MSDN for further information). The final destination of the waveform is the CSampleInstrument object which encapsulates the code to perform instrument manipulation. The code below shows these features: </P><PRE>1	
+2   // Loads the .wav file
+3   CDLSLoader::LoadWaveFile(&quot;.\\media\\starbreeze.wav&quot;,CSample1,
+4	DM_USE_MEMORY);
+5   // Assigns the patch
+6   CSample1.SetPatch(2);
+7		
+8   // Sets a continuous wave loop
+9   CSample1.SetLoop(TRUE);
+10		
+11  // Sets additional wave parameters
+12  CSample1.SetWaveParams(0,0,68,F_WSMP_NO_TRUNCATION); 
+13		
+14  REGION region;
+15  ARTICPARAMS articparams;
+16		
+17  // Initializes structures
+18  ZeroMemory(&amp;region,sizeof(REGION));
+19  ZeroMemory(&amp;articparams,sizeof(ARTICPARAMS));
+20		
+21		
+22  // Sets the region parameters
+23  region.RangeKey.usHigh = 127;
+24  region.RangeKey.usLow  = 0;
+25  region.RangeVelocity.usHigh = 127;
+26		
+27  // Adjusts LFO	
+28  articparams.LFO.tcDelay = TimeCents(10.0);
+29  articparams.LFO.pcFrequency = PitchCents(5.0);
+30		
+31  // Sets the pitch envelope
+32  articparams.PitchEG.tcAttack  = TimeCents(0.0);
+33  articparams.PitchEG.tcDecay   = TimeCents(0.0);
+34  articparams.PitchEG.ptSustain = PercentUnits(0.0);
+35  articparams.PitchEG.tcRelease = TimeCents(0.0);
+36
+37		
+38  // Sets the volume envelope
+39  articparams.VolEG.tcAttack  = TimeCents(1.275);
+40  articparams.VolEG.tcDecay   = TimeCents(0.0);
+41  articparams.VolEG.ptSustain = PercentUnits(100.0);
+42  articparams.VolEG.tcRelease = TimeCents(10.157);
+43		
+44		
+45  // Sets the instrument parameters
+46  CSample1.SetRegion(&amp;region);
+47  CSample1.SetArticulationParams(&amp;articparams);
+48		
+49  // Allocates memory for the download interfaces
+50  COutPort.AllocateMemory(CSample1);
+51  
+52  // Downloads the sample instrument to the port
+53  COutPort.DownloadInstrument(CSample1); 
+54  COutPort.SendMidiMsg(COutputPort::EncodeMidiMsg(PATCH_CHANGE,0,2,0),0);
+55					
+56  cout &lt;&lt; &quot;Ready to play a wave sample instrument&quot; &lt;&lt; endl;
+57
+58  getch();
+59
+60		
+61  // Assigns patch 1
+62  CSample2.SetPatch(3);
+63		
+64  // Sets additional wave parameters
+65  CSample2.SetWaveParams(0,0,68,F_WSMP_NO_TRUNCATION); 
+66		
+67  // Sets the instrument parameters
+68  CSample2.SetLoop(TRUE);
+69  CSample2.SetRegion(&amp;region);
+70  CSample2.SetArticulationParams(&amp;articparams);
+71
+72  // Generates the waveform data
+73  // Samples per second
+74  DWORD nSamplesPerSec = 44100;
+75		
+76  double nTimeSec = 1.5; // Time duration of the sample
+77				
+78  // Number of samples
+79  DWORD nSamples = static_cast&lt;DWORD&gt;(nTimeSec * nSamplesPerSec);
+80		
+81  // Digital frequency of the waveform
+82  double Frequency = 1000.0/nSamplesPerSec;
+83		
+84  // Allocates memory for the waveform
+85  BYTE *pRawData = new BYTE[nSamples*2];
+86		
+87  // Generates the waveform
+88  for(DWORD ni = 0;ni &lt; nSamples*2;ni+=2)
+89  {	
+90  	WORD wData     = static_cast&lt;WORD&gt;(30000*sin(2.0*PI*Frequency*ni) + 
+91		        5000*sin(6.0*PI*Frequency*ni) +
+92		        1000*sin(10.0*PI*Frequency*ni));
+93	pRawData[ni]   = static_cast&lt;BYTE&gt;(wData &amp; 0xFF);
+94	pRawData[ni+1] = static_cast&lt;BYTE&gt;((wData &amp; 0xFF00)&gt;&gt;8);
+95
+96 }
+97								
+98  // Format of the waveform
+99  WAVEFORMATEX wfex = {WAVE_FORMAT_PCM,1,44100,44100,2,16,0};
+100		
+101  // Sets the waveform into the sample object
+102  CSample2.SetWaveForm(pRawData,&amp;wfex,nSamples*2);
+103		
+104  // Allocates interface memory
+105  COutPort.AllocateMemory(CSample2);
+106		
+107  //Downloads the instrument to the port
+108  COutPort.DownloadInstrument(CSample2);
+109		
+110  COutPort.SendMidiMsg(COutputPort::EncodeMidiMsg(PATCH_CHANGE,0,3,0),0);
+					 </PRE>
+<P>In the first lines of the code above we load the .wav file, calling the <CODE>CDLSLoader::LoadWaveFile </CODE>static member function and storing the sample in memory.&nbsp;<BR>The first important operation of the download protocol is to assign a MIDI program (patch number) to that sample instrument before downloading it. Thus, we have the <CODE>CSampleInstrument::SetPatch </CODE>method (6th line) for this pourpose.&nbsp;</P>
+<P>After assigning the patch number, we can choose if we want to loop the sample by using the <CODE>CSampleInstrument::SetLoop </CODE>method (9th) and specifying whether we need a continuosly playing sample or a sample which is normally forward played. After setting this parameter we can proceed to adjust additional wave playback parameters like the Key note (MIDI unity playback note) and other ones like attenuation and fine tune (see <A href="http://directmidi.sourceforge.net/" target=_blank>DirectMIDI online documentation</A>). To perform this we must use the <CODE>CSampleInstrument::SetWaveParams</CODE> method (12th).&nbsp;</P>
+<P>The next essential parameters for a correct sample download are the regions and the articulations (without setting these parameters the sample will not sound). In the <CODE>REGION </CODE>structure we establish the keyboard zone where the instrument must respond to a note-on. For this, we must initialize to zero the structure and then fill its members with the corresponding MIDI ranges (see 23-25th lines). It's important to do the same with the <CODE>ARTICPARAMS </CODE>structure (see <A href="http://directmidi.sourceforge.net/" target=_blank>DirectMIDI online documentation</A>).&nbsp; This structure contains a set of members that adjust important parameters like LFO, volume envelope (VolEg) and pitch envelope (PitchEg) (28-42th). The DirectMIDI library provides a group of help functions to fill in the member values of the <CODE>ARTICPARAMS </CODE>structure. For instance, we have the <CODE>directmidi::TimeCents</CODE> function which converts "seconds" to the suitable input format (time cents).<CODE> </CODE>Next, call to <CODE>CSampleInstrument::SetRegion </CODE>and <CODE>CSampleInstrument::SetArticulationParams </CODE>to establish these parameters (46 and 47th).</P>
+<P>Finally, you can proceed to download the sample instrument to the output port by using <CODE>COutputPort::DownloadInstrument</CODE>, but first you must allocate memory for the internal DirectMusic interfaces which will perform all this, calling to the <CODE>CSampleInstrument::AllocateMemory</CODE> method with a reference to the sample object (52th-55th).&nbsp;<CODE><BR><BR></CODE>The second part of the code seen above explains how to generate a simple 1000Hz waveform with a 44100Hz sampling rate and 16 bits per sample. The lines 78 to 100 show the waveform generation. They allocate memory for the number of required samples: A number proportional to the duration of the playing sound, in this case 1.5 seconds (76th).&nbsp;<BR>Finally, in the 99th line we fill the members of the <CODE>WAVEFORMATEX </CODE>structure before calling the <CODE>CSampleInstrument::SetWaveForm </CODE>method which will indicate the <CODE>CSampleInstrument </CODE>object where the raw-data buffer is allocated (102th).&nbsp;</P>
+<P>For the rest of the code,&nbsp; the parameter setting and downloading operations are similar to those commented in the first part of this section. </P>
+<TABLE width="100%" border=0>
+<TBODY>
+<TR>
+<TD width="50%"><IMG height=238 src="envelopes.gif" width=447 border=0></TD></TR>
+<TR>
+<TD width="50%"><I>Starbreeze.wav volume envelope graph<BR>&nbsp;</I></TD></TR>
+<TR>
+<TD width="50%"><IMG height=222 src="sine.gif" width=386 border=0></TD></TR>
+<TR>
+<TD width="50%"><I></I></TD></TR></TBODY></TABLE>
+<P><EM>The generated waveform graph.</EM></P>
+<H5><B><A name=dm3327></A>3.3.2.7 Seventh Step: Closing down the application</B> </H5>
+<P>The seventh and last step is to finish the application in a suitable way. To do this, you must call the next member functions before ending your application:</P><PRE>    // Breaks the redirection
+    CInPort.BreakThru(0,0,0);
+    // Ends the notification
+    CInPort.TerminateNotification();
+    
+    // Unloads the collections from the loader
+    CLoader.UnloadCollection(CCollectionA);
+    CLoader.UnloadCollection(CCollectionB);
+    
+    // Unloads the instruments from the port
+    COutPort.UnloadInstrument(CInstrument1);
+    COutPort.UnloadInstrument(CInstrument2);
+    
+    // Unloads the sample instruments
+    COutPort.UnloadInstrument(CSample1);
+    COutPort.UnloadInstrument(CSample2);
+   
+    // Frees allocated memory
+    COutPort.DeallocateMemory(CSample1);
+    COutPort.DeallocateMemory(CSample2);
+		
+    // Disposes the memory
+    delete [] pRawData;	
+   
+    // Exit 
+}    
+catch (CDMusicException&amp; DMEx)
+{
+    cout &lt;&lt; DMEx.GetErrorDescription() &lt;&lt; endl;
+}
+
+return 0;
+}
+
+</PRE>
+<P>If you activated the notification in the input MIDI port object for receiving incoming MIDI events, it is your responsibility to call now <CODE>CInputPort::TerminateNotification</CODE> to finish the message handling and tell DirectMusic not to signal any more events. You must also call <CODE>CInputPort::BreakThru</CODE>, if you established a thru connection between ports. Also, it is important to unload the collections from memory once they are no longer needed, calling <CODE>CDLSLoader::UnloadCollection </CODE>and releasing the internal DirectMusic interfaces calling <CODE>COutputPort::DeallocateMemory </CODE>method. The same as the instruments from the synthesizer memory calling the&nbsp;<CODE> 
+COutputPort::UnloadInstrument </CODE>methods.&nbsp; </P>
+<P>Although DirectMIDI will free the memory for you in case you forget it, it's a good idea to do it by yourself. </P>
+<P><B><A name=dm333></A>3.3.3 Exception handling</B></P>
+<P>A few readers have reported me about their problems preventing error propagation and avoiding exception situations. I studied the problem and came up with the solution.<B> </B>To solve this, I added a new class to the DirectMIDI scheme for exception handling. This new class called <CODE>CDMusicException</CODE> handles all the posible errors and failures produced by an application that uses the library, forgetting the old and tedious use of the FAILED macro. <BR>Basically the object provides three important properties to inform about the error, these are: <CODE>m_hrCode</CODE> that informs about the DirectX COM <CODE>HRESULT </CODE>code obtained in the DirectMusic interface call, <CODE>m_strMethod, </CODE>that<CODE> </CODE>gives the method description where the function call failed and <CODE>m_nLine</CODE> that returns the line of the module source code where the error was generated. </P>
+<P>Besides these three properties, there is an additional method to facilitate the error description. This is obtained by calling <CODE>CDMusicException::GetErrorDescription() </CODE>which returns a <CODE>LPCTSTR </CODE>string containing a detailed error description when the exception has been caught. You can see an example in the image below: </P><IMG src="http://www.codeproject.com/audio/midiports/Output4.gif"> 
+<H2><A name=dm4></A>4. More information</H2>
+<P>If you are looking for information about DirectMusic, you will be able to find it in the DirectX 8/9 SDK documentation offered with the MSDN library at the <A href="http://www.microsoft.com/directx" target=_blank>DirectX home page</A>. If you are looking for more detailed information about DirectMIDI wrapper library, you will be able to obtain it in the on-line <A href="http://directmidi.sourceforge.net/" target=_blank>DirectMIDI developer's reference</A> in the SourceForge project homepage and in the sources available for downloading in this article.</P>
+<H2><A name=dm5></A>5. The demo application</H2>
+<P>The demo application called MidiStation v1.9 is an easy-to-use program that shows all the features of the DirectMIDI wrapper class. You can change parameters like the MIDI port for output, select any GM instrument, change octaves, record your compositions and preview all notes and messages from an external keyboard or even play with the built-in MIDI keyboard. Enjoy the MIDI!
+<H2><A name=dm6></A>6. History</H2>
+<UL>
+<LI>April 30th, 2003: Article updated. 
+<LI>May 12th, 2003: Source code updated 
+<LI>July 15th, 2003: Source code updated 
+<LI>November 25, 2003: Article updated.</LI></UL>
+
+
+
+<!----------------------------- Article Ends ----------------------------->
+<table borderColor="#cccccc" height="782" cellSpacing="1" width="100%" bgColor="#ff9900" border="0">
+  <tbody>
+    <tr>
+      <td width="46%" bgColor="#fbedbb" height="28"><b>MidiStation features</b></td>
+      <td width="54%" bgColor="#fbedbb" height="28"><br>
+        <b>DirectMidi changes</b><br>
+      </td>
+    </tr>
+    <tr>
+      <td vAlign="top" borderColor="#ffffff" bgColor="#ffffff" height="746">
+        <p><br>
+        MidiStation 1.4.4 features:</p>
+        <ul>
+          <li>All hardware MIDI ports available
+          <li>Interactive built-in music keyboard
+          <li>Connection to an external MIDI keyboard
+          <li>Visualization list of the external and internal keyboard messages
+          <li>GM instrument support
+          <li>Octave range selection
+          <li>Recording and playback</li>
+        </ul>
+        <p>MidiStation 1.8.4 features:</p>
+        <ul>
+          <li>All hardware and software MIDI ports available
+          <li>Internal GM/GS set load
+          <li>PC keyboard octave control
+          <li>Improved playback system
+          <li>Message list guideline</li>
+        </ul>
+        <p>MidiStation 1.9.0 features:</p>
+        <ul>
+          <li>Built-in and reusable keyboard control
+          <li>Implicit multithread synchronization
+          <li>Full octave range selection
+          <li>Improved PC keyboard control
+          <li>Hand cursor</li>
+        </ul>
+        <p>MidiStation 1.9.1 features:</p>
+        <ul>
+          <li>Fixed running status bug (Andras22 bug)
+          <li>Fixed DLS port bug
+          <li>Fixed message list bugs</li>
+        </ul>
+        <p>MidiStation 1.9.2 features:</p>
+        <ul>
+          <li><font face="Verdana" size="2">Loading and saving of .MDS sequenced
+            files</font>
+          <li><font face="Verdana" size="2">Unlimited recording</font></li>
+        </ul>
+        <p>&nbsp;</p>
+      </td>
+      <td vAlign="top" bgColor="#ffffff" height="746">
+        <p><br>
+        DirectMIDI 2.0b changes:</p>
+        <ul>
+          <li>Improved class destructors
+          <li>Software synthesizers available
+          <li>Added flexible conversion functions
+          <li>SysEx reception and sending enabled
+          <li>Better method to enumerate and select MIDI ports
+          <li>Restructured the class system
+          <li>Adapted the external thread to a pure virtual function</li>
+        </ul>
+        <p><br>
+        DirectMIDI 2.1b changes:</p>
+        <ul>
+          <li>Added exception handling
+          <li>Fixed bugs with channel groups
+          <li>Redesigned class hierarchy
+          <li>DirectMIDI wrapped in the directmidi namespace
+          <li>UNICODE/MBCS support for instruments and ports
+          <li>Added DELAY effect to software synthesizer ports
+          <li>Project released under GNU (General Public License) terms<br>
+          </li>
+        </ul>
+        <p>DirectMIDI 2.2b changes:</p>
+        <ul>
+          <li>Redesigned class interfaces
+          <li>Safer input port termination thread
+          <li>New CMasterClock class
+          <li>DLS files can be loaded from resources
+          <li>DLS instrument note range support
+          <li>New CSampleInstrument class added to the library
+          <li>Direct downloading of samples to wave-table memory
+          <li>WAV file sample format supported
+          <li>New methods added to the output port class
+          <li>Fixed small bugs</li>
+        </ul>
+        <p>DirectMIDI 2.3b changes:</p>
+        <ul>
+          <li>Added new DirectMusic classes for audio handling
+          <li>Improved CMidiPort class with internal buffer run-time resizing
+          <li>3D audio positioning
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
